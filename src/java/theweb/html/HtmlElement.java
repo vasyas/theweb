@@ -28,7 +28,7 @@ public class HtmlElement implements Markup {
     }
     
     @Override
-    public String html() {
+    public String render() {
         String attributes = attributesToString();
         if ( attributes.length() > 0 ) attributes = " " + attributes;
 
@@ -53,7 +53,7 @@ public class HtmlElement implements Markup {
         StringBuilder s = new StringBuilder();
 
         for (Markup child : children)
-            s.append(child.html());
+            s.append(child.render());
         
         return s.toString();
     }

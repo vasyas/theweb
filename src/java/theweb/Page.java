@@ -1,6 +1,8 @@
 package theweb;
 
-public abstract class Page {
+import theweb.html.StringMarkup;
+
+public class Page {
     protected final String baseUrl;
 
     public Page(String baseUrl) {
@@ -10,5 +12,7 @@ public abstract class Page {
         this.baseUrl = baseUrl;
     }
     
-    public abstract Markup markup();
+    public Markup markup() throws Exception { 
+        return new StringMarkup(""); 
+    }
 }

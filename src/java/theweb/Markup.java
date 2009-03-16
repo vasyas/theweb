@@ -1,5 +1,5 @@
 package theweb;
 
 public interface Markup {
-    public String html();
+    public String render();
 }

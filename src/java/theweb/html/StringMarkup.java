@@ -11,7 +11,7 @@ public class StringMarkup implements Markup {
     }
     
     @Override
-    public String html() {
+    public String render() {
         return s;
     }
 
