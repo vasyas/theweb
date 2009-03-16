@@ -18,7 +18,7 @@ public class VelocityTemplateMarkup implements Markup {
     }
 
     @Override
-    public String html() {
+    public String render() {
         return velocityTemplate.render(context);
     }
 }

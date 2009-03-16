@@ -12,7 +12,7 @@ public class HtmlElementTest extends TestCase {
         element.setAttribute("b");
         element.set("c", "2");
 
-        assertEquals("<e a=\"1\" b c=\"2\"/>", element.html());
+        assertEquals("<e a=\"1\" b c=\"2\"/>", element.render());
 
         element = new ElementWithContent();
 
@@ -21,7 +21,7 @@ public class HtmlElementTest extends TestCase {
         element.setAttribute("b");
         element.set("c", "2");
 
-        assertEquals("<e a=\"1\" b c=\"2\">1</e>", element.html());
+        assertEquals("<e a=\"1\" b c=\"2\">1</e>", element.render());
     }
     
     public void testChildren() throws Exception {
@@ -29,7 +29,7 @@ public class HtmlElementTest extends TestCase {
         
         el.add(new HtmlElement("child"));
         
-        assertEquals("<parent><child/></parent>", el.html());
+        assertEquals("<parent><child/></parent>", el.render());
     }
     
     public void testSetAttributes() {
@@ -54,7 +54,7 @@ public class HtmlElementTest extends TestCase {
         el.setAttribute("b");
         el.set("c", "3");
 
-        assertEquals("<e a=\"1\" b c=\"3\"/>", el.html());
+        assertEquals("<e a=\"1\" b c=\"3\"/>", el.render());
     }
 
     class ElementWithContent extends HtmlElement {

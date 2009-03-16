@@ -2,16 +2,26 @@ package theweb;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import theweb.execution.Executor;
+import theweb.execution.PageInterceptor;
+
 public class Pages {
     private List<Page> pages = new ArrayList<Page>();
-
-    public void addPage(Page page) {
+    
+    public Pages add(Page page) {
+        return addPage(page);
+    }
+    
+    public Pages addPage(Page page) {
         this.pages.add(page);
+        return this;
     }
     
     private List<PageInterceptor> interceptors = new ArrayList<PageInterceptor>();
@@ -19,9 +29,17 @@ public class Pages {
     public void addInterceptor(PageInterceptor interceptor) {
         interceptors.add(interceptor);
     }
+    
+    private List<Collector> collectors = new ArrayList<Collector>();
+    
+    public void addCollector(Collector collector) {
+        collectors.add(collector);
+    }
+    
+    public Populator populator = new JavascriptPopulator();
 
     public void invoke(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        new ContextInfo(request.getContextPath() + request.getServletPath());
+        new ContextInfo(request.getContextPath());
         
         Page page = getPage(request);
         
@@ -30,27 +48,31 @@ public class Pages {
             return;
         }
         
-        for (PageInterceptor interceptor : interceptors) {
-            if (!interceptor.beforePopulate(page, request, response))
-                return;
-        }
-        
-        
         try {
-            new Populator().populate(page, request);
+            Map<String, Object> properties = new LinkedHashMap<String, Object>();
+            
+            for (Collector collector : collectors)
+                collector.collect(properties, request);
+            
+            populator.populate(page, properties);
             
             PageState.setCurrent(new PageState(page));
+        
+            if (page instanceof RequestPathParameters)
+                ((RequestPathParameters) page).setPathParameters(request.getServletPath() + request.getPathInfo());
             
-            Outcome outcome = new Executor().exec(page, request);
+            Outcome outcome = new Executor(interceptors).exec(page, request, response);
             
             outcome.process(page, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             PageState.clear();
         }
     }
 
     private Page getPage(HttpServletRequest request) {
-        String path = request.getPathInfo();
+        String path = request.getServletPath();
         
         if (path == null) path = "";
         

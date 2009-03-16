@@ -1,13 +1,12 @@
 package theweb;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
 class Renderer {
 
-    public void render(Page page, HttpServletResponse response) throws IOException {
+    public void render(Page page, HttpServletResponse response) throws Exception {
         Markup markup = page.markup();
         
         response.setContentType("text/html; charset=UTF-8");
@@ -19,7 +18,7 @@ class Renderer {
         Messages messages = Messages.get();
         
         try {
-            writer.write(markup.html());
+            writer.write(markup.render());
         } finally {
             messages.clear();
         }
