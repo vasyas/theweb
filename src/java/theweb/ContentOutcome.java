@@ -15,12 +15,17 @@ public class ContentOutcome implements Outcome {
         this.content = content;
         this.contentType = contentType;
     }
+    
+    public ContentOutcome(String content) {
+        this(content, "text/html; charset=UTF-8");
+    }
 
     @Override
     public void process(Page page, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(contentType);
         response.addHeader("Pragma", "no-cache");
         response.addHeader("Expires", "0");
+        response.addHeader("Etag", "" + Math.random());
 
         PrintWriter writer = response.getWriter();
 

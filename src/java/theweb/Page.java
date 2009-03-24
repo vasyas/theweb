@@ -3,13 +3,17 @@ package theweb;
 import theweb.html.StringMarkup;
 
 public class Page {
-    protected final String baseUrl;
+    protected final PathPattern pathPattern;
 
     public Page(String baseUrl) {
-        if (!baseUrl.endsWith("/"))
+        this(new PathPattern(baseUrl));
+    }
+    
+    public Page(PathPattern pathPattern) {
+        if (!pathPattern.pattern.endsWith("/"))
             throw new IllegalStateException("Page urls should ends with /");
         
-        this.baseUrl = baseUrl;
+        this.pathPattern = pathPattern;
     }
     
     public Markup markup() throws Exception { 

@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class PageState {
     private final Map<String, String[]> parameterMap;
-    private final String baseUrl;
+    private final PathPattern pathPattern;
 
     public PageState(Page page) {
-        this(page.baseUrl);
+        this(page.pathPattern);
         
         try {
             describeDeclaredFields(page);
@@ -27,8 +27,8 @@ public class PageState {
         }
     }
     
-    private PageState(String baseUrl) {
-        this.baseUrl = baseUrl;
+    private PageState(PathPattern pathPattern) {
+        this.pathPattern = pathPattern;
         parameterMap = new HashMap<String, String[]>();
     }
     
@@ -116,7 +116,7 @@ public class PageState {
         StringBuilder url = new StringBuilder();
         
         url.append(ContextInfo.getCurrent().contextPath);
-        url.append(baseUrl);
+        url.append(pathPattern.createPath(parameters));
         
         url.append(method);
         
@@ -140,7 +140,7 @@ public class PageState {
         return url.toString();
     }
 
-    private static void addParameter(Map<String, String[]> parameters, String name, String value) {
+    private void addParameter(Map<String, String[]> parameters, String name, String value) {
         if (!parameters.containsKey(name)) {
             String[] array = new String[1];
             array[0] = value;
@@ -155,6 +155,6 @@ public class PageState {
     }
 
     public PageState clean() {
-        return new PageState(baseUrl);
+        return new PageState(pathPattern);
     }
 }
