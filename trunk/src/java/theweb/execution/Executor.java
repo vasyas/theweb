@@ -65,7 +65,7 @@ public class Executor {
                         String value = request.getParameter(paramAnnotation.value());
                         
                         if (value != null)
-                            args[i] = value.trim();
+                            args[i] = new TypeConvertor().convertValue(value, m.getParameterTypes()[i]);
                     }
                 }
             }

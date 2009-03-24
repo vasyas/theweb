@@ -41,7 +41,9 @@ public class Pages {
     public void invoke(HttpServletRequest request, HttpServletResponse response) throws IOException {
         new ContextInfo(request.getContextPath());
         
-        Page page = getPage(request);
+        Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        
+        Page page = getPage(request, properties);
         
         if (page == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -49,8 +51,6 @@ public class Pages {
         }
         
         try {
-            Map<String, Object> properties = new LinkedHashMap<String, Object>();
-            
             for (Collector collector : collectors)
                 collector.collect(properties, request);
             
@@ -58,9 +58,6 @@ public class Pages {
             
             PageState.setCurrent(new PageState(page));
         
-            if (page instanceof RequestPathParameters)
-                ((RequestPathParameters) page).setPathParameters(request.getServletPath() + request.getPathInfo());
-            
             Outcome outcome = new Executor(interceptors).exec(page, request, response);
             
             outcome.process(page, request, response);
@@ -71,14 +68,20 @@ public class Pages {
         }
     }
 
-    private Page getPage(HttpServletRequest request) {
-        String path = request.getServletPath();
+    private Page getPage(HttpServletRequest request, Map<String, Object> properties) {
+        String path = request.getServletPath() + request.getPathInfo();
         
         if (path == null) path = "";
         
-        for (Page page : pages)
-            if (path.startsWith(page.baseUrl)) 
+        for (Page page : pages) {
+            Map<String, String> matches = page.pathPattern.matches(path);
+            
+            if (matches != null) {
+                properties.putAll(matches);
+                
                 return page;
+            }
+        }
         
         return null;
     }

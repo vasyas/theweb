@@ -12,16 +12,11 @@ class Renderer {
         response.setContentType("text/html; charset=UTF-8");
         response.addHeader("Pragma", "no-cache");
         response.addHeader("Expires", "0");
+        response.addHeader("Etag", "" + Math.random());
 
         PrintWriter writer = response.getWriter();
 
-        Messages messages = Messages.get();
-        
-        try {
-            writer.write(markup.render());
-        } finally {
-            messages.clear();
-        }
+        writer.write(markup.render());
         
         writer.flush();
     }
