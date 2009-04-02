@@ -36,7 +36,7 @@ public class Pages {
         collectors.add(collector);
     }
     
-    public Populator populator = new JavascriptPopulator();
+    public Populator populator = new ReflectionPopulator(true);
 
     public void invoke(HttpServletRequest request, HttpServletResponse response) throws IOException {
         new ContextInfo(request.getContextPath());
