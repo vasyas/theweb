@@ -6,6 +6,12 @@ public class HtmlLink extends HtmlElement {
         
         set("href", href);
     }
+    
+    public HtmlLink(String href, String content) {
+        super("a", content);
+        
+        set("href", href);
+    }
 
     public HtmlLink setOnclick(String string) {
         set("onclick", string);

@@ -58,11 +58,7 @@ public class HtmlElement implements Markup {
         return s.toString();
     }
 
-    public void setAttribute(String name) {
-        set(name, null);
-    }
-    
-    public String getAttribute(String name) {
+    public String get(String name) {
         return attributes.get(name);
     }
 
@@ -83,7 +79,7 @@ public class HtmlElement implements Markup {
             String value = attributes.get(name);
 
             if ( value != null )
-                string += name + "=\"" + getAttribute(name) + "\"";
+                string += name + "=\"" + get(name) + "\"";
             else
                 string += name;
         }
@@ -108,4 +104,7 @@ public class HtmlElement implements Markup {
         return set("style", value);
     }
 
+    public List<Markup> getChildren() {
+        return children;
+    }
 }
