@@ -9,7 +9,7 @@ public class HtmlElementTest extends TestCase {
 
         element.tagName = "e";
         element.set("a", "1");
-        element.setAttribute("b");
+        element.set("b", null);
         element.set("c", "2");
 
         assertEquals("<e a=\"1\" b c=\"2\"/>", element.render());
@@ -18,7 +18,7 @@ public class HtmlElementTest extends TestCase {
 
         element.tagName = "e";
         element.set("a", "1");
-        element.setAttribute("b");
+        element.set("b", null);
         element.set("c", "2");
 
         assertEquals("<e a=\"1\" b c=\"2\">1</e>", element.render());
@@ -36,10 +36,10 @@ public class HtmlElementTest extends TestCase {
         HtmlElement el = new HtmlElement();
 
         el.set("a", "1");
-        assertEquals("1", el.getAttribute("a"));
+        assertEquals("1", el.get("a"));
 
         el.set("a", "2");
-        assertEquals("2", el.getAttribute("a"));
+        assertEquals("2", el.get("a"));
 
         try {
             el.set(null, "1");
@@ -51,7 +51,7 @@ public class HtmlElementTest extends TestCase {
     public void testAttributesToString() {
         HtmlElement el = new HtmlElement("e");
         el.set("a", "1");
-        el.setAttribute("b");
+        el.set("b", null);
         el.set("c", "3");
 
         assertEquals("<e a=\"1\" b c=\"3\"/>", el.render());
