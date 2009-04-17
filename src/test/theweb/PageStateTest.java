@@ -28,6 +28,14 @@ public class PageStateTest extends TestCase {
         public String field2 = "2";
     }
     
+    public static class MockPageTypes extends Page {
+        public MockPageTypes() {
+            super("/base/");
+        }
+        
+        public boolean field1;
+    }
+    
     @Override
     protected void setUp() throws Exception {
         new ContextInfo("/context");
@@ -37,10 +45,14 @@ public class PageStateTest extends TestCase {
         assertEquals("/context/base/", new PageState(new MockPageNone()).view());
         assertEquals("/context/base/test", new PageState(new MockPageNone()).action("test"));
         
-        assertEquals("/context/base/test?page.field2=&page.field3=value", new PageState(new MockPageStringFields()).action("test"));
+        assertEquals("/context/base/test?page.field3=value", new PageState(new MockPageStringFields()).action("test"));
     }
     
     public void testPathPattern() throws Exception {
         assertEquals("/context/base/1/?page.field2=2", new PageState(new MockPagePattern()).view());
+    }
+    
+    public void testTypeConversion() throws Exception {
+        assertEquals("/context/base/?page.field1=false", new PageState(new MockPageTypes()).view());
     }
 }

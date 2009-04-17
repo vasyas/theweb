@@ -3,7 +3,7 @@ package theweb;
 public class ContextInfo {
     public final String contextPath;
     
-    ContextInfo(String contextPath) {
+    public ContextInfo(String contextPath) {
         this.contextPath = contextPath;
         
         tl.set(this);
