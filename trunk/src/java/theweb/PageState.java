@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import theweb.execution.TypeConvertor;
+
 /**
  * Used to transform page state into a set of request parameters
  * 
@@ -34,20 +36,28 @@ public class PageState {
     
     private void describeDeclaredFields(Page page) throws IllegalArgumentException, IllegalAccessException {
         for (Field field : page.getClass().getFields()) {
-            if (field.getType().isArray())
-                if (String.class.equals(field.getType().getComponentType())) {
-                    String[] value = (String[]) field.get(page);
-                    
-                    if (value != null)
-                        parameterMap.put("page." + field.getName(), value);
-                }
+            Object value = field.get(page);
             
-            if (String.class.equals(field.getType())) {
-                String value = (String) field.get(page);
+            String[] result = null;
+            
+            if (field.getType().isArray()) {
+                Object[] array = (Object[]) field.get(page);
+                result = new String[array.length];
                 
-                if (value != null)
-                    parameterMap.put("page." + field.getName(), new String[] { value });
+                for (int i = 0; i < array.length; i ++) {
+                    String convertedValue = (String) new TypeConvertor().convertValue(array[i], String.class);
+                    
+                    result[i] = convertedValue;
+                }
+            } else {
+                String convertedValue = (String) new TypeConvertor().convertValue(value, String.class);
+                
+                if (convertedValue != null && !convertedValue.isEmpty())
+                    result = new String[] { convertedValue };
             }
+            
+            if (result != null)
+                parameterMap.put("page." + field.getName(), result);
         }
     }
 

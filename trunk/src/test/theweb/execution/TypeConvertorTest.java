@@ -42,6 +42,12 @@ public class TypeConvertorTest extends TestCase {
         assertEquals(AA.a, convertor.convertValue("a", AA.class));
     }
     
+    public void testArrayAndElementConversion() throws Exception {
+        assertEquals(true, convertor.convertValue(new String[] { "true" }, Boolean.class));
+        assertArrayEquals(new String[] { "true" }, (String[]) convertor.convertValue(true, new String[0].getClass()));
+        assertArrayEquals(new String[] { "true" }, (String[]) convertor.convertValue(new boolean[] { true }, new String[0].getClass()));
+    }
+    
     private static void assertArrayEquals(Object[] l, Object[] object) {
         assertEquals(Arrays.toString(l), Arrays.toString(object));
     }
