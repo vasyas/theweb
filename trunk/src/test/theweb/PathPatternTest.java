@@ -57,4 +57,10 @@ public class PathPatternTest extends TestCase {
         } catch(RuntimeException e) {
         }
     }
+    
+    public void testMatchingBug() throws Exception {
+        PathPattern pattern = new PathPattern("/report/something/");
+        
+        assertNull(pattern.matches("/report/"));
+    }
 }

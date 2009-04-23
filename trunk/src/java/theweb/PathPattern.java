@@ -20,7 +20,7 @@ public class PathPattern {
             String varName = getVarName(templateTokens[i]);
             
             if (varName == null) // not variable - should be equal
-                if (!servletTokens[i].equals(templateTokens[i])) 
+                if (servletTokens.length <= i || !servletTokens[i].equals(templateTokens[i])) 
                     return null;
             
             if (varName != null && i < servletTokens.length)
