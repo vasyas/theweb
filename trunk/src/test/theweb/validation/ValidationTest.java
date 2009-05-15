@@ -2,6 +2,7 @@ package theweb.validation;
 
 import junit.framework.TestCase;
 import theweb.Messages;
+import theweb.test.TestPage;
 
 public class ValidationTest extends TestCase {
     class Base {
@@ -29,6 +30,13 @@ public class ValidationTest extends TestCase {
         Validation.validate(new Derived());
         
         assertEquals(2, Messages.get().getErrors().size());
+        
+    }
+    
+    public void testValidateNotAccessibleFields() throws Exception {
+        Validation.validate(TestPage.page);
+        
+        assertEquals(1, Messages.get().getErrors().size());
         
     }
 }

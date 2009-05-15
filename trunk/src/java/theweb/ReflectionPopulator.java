@@ -3,6 +3,7 @@ package theweb;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,25 +71,29 @@ public class ReflectionPopulator implements Populator {
             key = matcher.group(2);
         }
         
-        // try field
+        // try public field
         try {
             Field field = current.getClass().getField(component);
             
-            if (path == null && key == null) { // no next component
-                value = new TypeConvertor().convertValue(value, field.getType());
+            if (Modifier.isPublic(field.getModifiers())) {
+                if (!field.isAccessible()) field.setAccessible(true); // access inner classes
                 
-                try {
-                    field.set(current, value);
-                } catch (IllegalArgumentException e) {
-                } catch(IllegalAccessException e) {
+                if (path == null && key == null) { // no next component
+                    value = new TypeConvertor().convertValue(value, field.getType());
+                    
+                    try {
+                        field.set(current, value);
+                    } catch (IllegalArgumentException e) {
+                    } catch(IllegalAccessException e) {
+                    }
+                    
+                    return;
                 }
                 
-                return;
+                Object next = field.get(current);
+                
+                evaluateKeyCheck(next, path, key, value);
             }
-            
-            Object next = field.get(current);
-            
-            evaluateKeyCheck(next, path, key, value);
         } catch(NoSuchFieldException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
@@ -101,7 +106,9 @@ public class ReflectionPopulator implements Populator {
             try {
                 Method method = getMethodOfName(current.getClass(), methodName);
                 
-                if (method == null) return;
+                if (method == null || !Modifier.isPublic(method.getModifiers())) return;
+                
+                if (!method.isAccessible()) method.setAccessible(true);
                 
                 Class<?> propertyType = method.getParameterTypes()[0];
                 

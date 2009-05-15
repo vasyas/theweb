@@ -58,7 +58,7 @@ public class Pages {
             
             PageState.setCurrent(new PageState(page));
         
-            Outcome outcome = new Executor(interceptors).exec(page, request, response);
+            Outcome outcome = new Executor(interceptors).exec(page, properties, request, response);
             
             outcome.process(page, request, response);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class Pages {
         if (path == null) path = "";
         
         for (Page page : pages) {
-            Map<String, String> matches = page.pathPattern.matches(path);
+            Map<String, String> matches = page.getPathPattern().matches(path);
             
             if (matches != null) {
                 properties.putAll(matches);

@@ -2,6 +2,7 @@ package theweb.execution;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import theweb.ContentOutcome;
 import theweb.Outcome;
@@ -15,6 +16,11 @@ class PageExecution implements Execution {
     
     public Outcome execute() {
         try {
+            if (!Modifier.isPublic(m.getModifiers())) 
+                throw new RuntimeException("Action method " + m + " should be public");
+                
+            if (!m.isAccessible()) m.setAccessible(true);
+            
             Object result = m.invoke(page, args);
             
             if (result instanceof Outcome) 

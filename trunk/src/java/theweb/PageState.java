@@ -1,6 +1,7 @@
 package theweb;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class PageState {
     private final PathPattern pathPattern;
 
     public PageState(Page page) {
-        this(page.pathPattern);
+        this(page.getPathPattern());
         
         try {
             describeDeclaredFields(page);
@@ -36,6 +37,10 @@ public class PageState {
     
     private void describeDeclaredFields(Page page) throws IllegalArgumentException, IllegalAccessException {
         for (Field field : page.getClass().getFields()) {
+            if (!field.isAccessible()) field.setAccessible(true);
+            
+            if (Modifier.isTransient(field.getModifiers())) continue;
+            
             Object value = field.get(page);
             
             String[] result = null;

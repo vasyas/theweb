@@ -4,13 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import theweb.test.TestPage;
 
 public class ReflectionPopulatorTest extends TestCase {
     public static class Nested {
         public String s;
     }
     
-    public static class MockPage extends Page { 
+    public static class Base extends AbstractPage {
+        public Base(String baseUrl) {
+            super(baseUrl);
+        }
+
+        public String baseProperty;
+    }
+    
+    public static class MockPage extends Base { 
         public MockPage() {
             super("/base/");
         }
@@ -113,5 +122,24 @@ public class ReflectionPopulatorTest extends TestCase {
         populator.populate(page, props);
         
         assertEquals("value", page.nested.s);
+    }
+    
+    public void testAccessible() throws Exception {
+        props.put("page.a", "v");
+        props.put("page.b", "v");
+        props.put("page.c", "v");
+        props.put("page.d", "v");
+        
+        populator.populate(TestPage.page, props);
+        
+        assertEquals("vnullvnull", TestPage.page.toString());
+    }
+    
+    public void testSubclass() throws Exception {
+        props.put("page.baseProperty", "v");
+        
+        populator.populate(page, props);
+        
+        assertEquals("v", page.baseProperty);
     }
 }

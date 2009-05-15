@@ -3,13 +3,13 @@ package theweb;
 import junit.framework.TestCase;
 
 public class PageStateTest extends TestCase {
-    public static class MockPageNone extends Page { 
+    public static class MockPageNone extends AbstractPage { 
         public MockPageNone() {
             super("/base/");
         }
     }
     
-    public static class MockPageStringFields extends Page { 
+    public static class MockPageStringFields extends AbstractPage { 
         public MockPageStringFields() {
             super("/base/");
         }
@@ -19,7 +19,7 @@ public class PageStateTest extends TestCase {
         public String field3 = "value";
     }
     
-    public static class MockPagePattern extends Page { 
+    public static class MockPagePattern extends AbstractPage { 
         public MockPagePattern() {
             super("/base/{page.field1}/");
         }
@@ -28,12 +28,21 @@ public class PageStateTest extends TestCase {
         public String field2 = "2";
     }
     
-    public static class MockPageTypes extends Page {
+    public static class MockPageTypes extends AbstractPage {
         public MockPageTypes() {
             super("/base/");
         }
         
         public boolean field1;
+    }
+    
+    public static class MockPageTransient extends AbstractPage {
+        public MockPageTransient() {
+            super("/base/");
+        }
+        
+        public String a = "b";
+        public transient String c = "d";
     }
     
     @Override
@@ -54,5 +63,22 @@ public class PageStateTest extends TestCase {
     
     public void testTypeConversion() throws Exception {
         assertEquals("/context/base/?page.field1=false", new PageState(new MockPageTypes()).view());
+    }
+    
+    public void testTransientProperties() throws Exception {
+        assertEquals("/context/base/?page.a=b", new PageState(new MockPageTransient()).view());
+    }
+
+    AbstractPage p1 = new MockPageNone() {
+        public String a = "b";
+    };
+    
+    private static class InaccessiblePage extends MockPageNone {
+        public String a = "b";
+    }
+    
+    public void testAccessible() throws Exception {
+        assertEquals("/context/base/?page.a=b", new PageState(p1).view());
+        assertEquals("/context/base/?page.a=b", new PageState(new InaccessiblePage()).view());
     }
 }
