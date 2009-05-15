@@ -32,6 +32,9 @@ public class Validation {
 				parameters.init(annotation);
 			}
 			
+			if (!field.isAccessible()) 
+			    field.setAccessible(true);
+			    
 			Object property = field.get(object);
 			
 			validator.validate(object, property);

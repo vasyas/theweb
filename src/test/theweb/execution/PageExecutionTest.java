@@ -1,5 +1,6 @@
 package theweb.execution;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import theweb.ContentOutcome;
 import theweb.NoOutcome;
 import theweb.Outcome;
 import theweb.Page;
+import theweb.test.TestPage;
 
 public class PageExecutionTest extends TestCase {
     public void testInvokationCompleted() throws Exception {
@@ -86,7 +88,7 @@ public class PageExecutionTest extends TestCase {
         }
 
         @Override
-        public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) {
+        public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException {
             sequence.append(name);
             return execution.execute();
         }
@@ -123,6 +125,24 @@ public class PageExecutionTest extends TestCase {
         public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) {
             sequence.append(name);
             throw new RuntimeException("not found");
+        }
+    }
+    
+    public void testInaccessibleMethod() throws Exception {
+        PageExecution execution = new PageExecution();
+
+        execution.page = TestPage.page;
+        execution.args = new Object[0];
+        execution.m = TestPage.page.getClass().getDeclaredMethod("action1");
+        
+        execution.execute();
+        
+        execution.m = TestPage.page.getClass().getDeclaredMethod("action2");
+        
+        try {
+            execution.execute();
+            fail();
+        } catch(RuntimeException e) {
         }
     }
 }

@@ -1,8 +1,10 @@
 package theweb.execution;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +22,7 @@ public class Executor {
         this.interceptors = interceptors;
     }
     
-    public Outcome exec(Page page, HttpServletRequest request, HttpServletResponse response) {
+    public Outcome exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
         
         String method = null;
@@ -30,25 +32,29 @@ public class Executor {
         if (idx != -1 && idx != path.length() - 1)
             method = path.substring(idx + 1);
         
-        Execution pageExecution = getExecution(request, page, method);
+        Execution pageExecution = getExecution(properties, page, method);
         
         ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, request, response, pageExecution);
 
         return chainedActionInvokation.execute();
     }
 
-    private Execution getExecution(HttpServletRequest request, final Page page, String name) {
+    private Execution getExecution(Map<String, Object> properties, final Page page, String name) {
         Method m = null;
         
         for (Method m1 : page.getClass().getMethods()) {
-            if (m1.getName().equals(name))
+            if (m1.getName().equals(name)) {
                 m = m1;
+                break;
+            }
         }
         
         if (m == null)
             for (Method m1 : page.getClass().getMethods()) {
-                if (m1.getAnnotation(DefaultAction.class) != null)
+                if (m1.getAnnotation(DefaultAction.class) != null) {
                     m = m1;
+                    break;
+                }
             }
 
         if (m != null) {
@@ -62,7 +68,7 @@ public class Executor {
                         Param paramAnnotation = (Param) annotation;
                         
                         // find request parameter
-                        String value = request.getParameter(paramAnnotation.value());
+                        Object value = properties.get(paramAnnotation.value());
                         
                         if (value != null)
                             args[i] = new TypeConvertor().convertValue(value, m.getParameterTypes()[i]);

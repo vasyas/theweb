@@ -91,6 +91,11 @@ public class HtmlElement implements Markup {
         children.add(child);
         return this;
     }
+    
+    public HtmlElement inject(HtmlElement parent) {
+        parent.add(this);
+        return this;
+    }
 
     public HtmlElement setClass(String value) {
         return set("class", value);

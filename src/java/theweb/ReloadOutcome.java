@@ -8,6 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 public class ReloadOutcome implements Outcome {
     @Override
     public void process(Page page, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(request.getServletPath() + PageState.getCurrent().view());
+        response.sendRedirect(PageState.getCurrent().view());
     }
 }

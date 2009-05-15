@@ -1,5 +1,6 @@
 package theweb.execution;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,7 @@ class ChainedActionExecution implements Execution {
         this.response = response;
     }
 
-    public Outcome execute() {
+    public Outcome execute() throws IOException {
         if ( current.hasNext() ) {
             PageInterceptor interceptor = current.next();
             return interceptor.execute(this, request, response);
