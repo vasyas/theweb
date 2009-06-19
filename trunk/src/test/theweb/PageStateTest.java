@@ -1,5 +1,7 @@
 package theweb;
 
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 public class PageStateTest extends TestCase {
@@ -69,10 +71,12 @@ public class PageStateTest extends TestCase {
         assertEquals("/context/base/?page.a=b", new PageState(new MockPageTransient()).view());
     }
 
+    @SuppressWarnings("unused")
     AbstractPage p1 = new MockPageNone() {
         public String a = "b";
     };
     
+    @SuppressWarnings("unused")
     private static class InaccessiblePage extends MockPageNone {
         public String a = "b";
     }
@@ -80,5 +84,23 @@ public class PageStateTest extends TestCase {
     public void testAccessible() throws Exception {
         assertEquals("/context/base/?page.a=b", new PageState(p1).view());
         assertEquals("/context/base/?page.a=b", new PageState(new InaccessiblePage()).view());
+    }
+    
+    public static class BaseCustomDescriptionPage extends MockPageNone {
+        @CustomDescription
+        public void describeBase(Map<String, String[]> parameterMap) {
+            parameterMap.put("base", new String[] { "a" });
+        }
+    }
+    
+    public static class CustomDescriptionPage extends BaseCustomDescriptionPage {
+        @CustomDescription
+        public void describe(Map<String, String[]> parameterMap) {
+            parameterMap.put("derived", new String[] { "b" });
+        }
+    }
+    
+    public void testCustomDescription() throws Exception {
+        assertEquals("/context/base/?base=a&derived=b", new PageState(new CustomDescriptionPage()).view());
     }
 }
