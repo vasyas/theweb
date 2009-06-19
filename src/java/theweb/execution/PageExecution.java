@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import theweb.ContentOutcome;
 import theweb.Outcome;
 import theweb.Page;
-import theweb.ReloadOutcome;
+import theweb.RenderOutcome;
 
 class PageExecution implements Execution {
     public Method m;
@@ -29,7 +29,7 @@ class PageExecution implements Execution {
             if (result instanceof String)
                 return new ContentOutcome((String) result, "text/html; charset=UTF-8");
             
-            return new ReloadOutcome();
+            return new RenderOutcome();
         } catch(InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
         } catch (IllegalAccessException e) {
