@@ -27,6 +27,12 @@ public class HtmlElement implements Markup {
         add(new StringMarkup(content));
     }
     
+    public HtmlElement(String tagName, Markup content) {
+        this.tagName = tagName;
+        
+        add(content);
+    }
+    
     @Override
     public String render() {
         String attributes = attributesToString();
@@ -62,6 +68,10 @@ public class HtmlElement implements Markup {
         return attributes.get(name);
     }
 
+    public HtmlElement set(String name) {
+        return set(name, null);
+    }
+    
     public HtmlElement set(String name, String value) {
         if ( name == null ) throw new IllegalArgumentException("name is null");
 
