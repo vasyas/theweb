@@ -69,7 +69,7 @@ public class Pages {
     }
 
     private Page getPage(HttpServletRequest request, Map<String, Object> properties) {
-        String path = request.getServletPath() + request.getPathInfo();
+        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
         
         if (path == null) path = "";
         
