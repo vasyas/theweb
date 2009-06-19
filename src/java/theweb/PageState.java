@@ -1,6 +1,8 @@
 package theweb;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,16 +25,25 @@ public class PageState {
         
         try {
             describeDeclaredFields(page);
+            describeCustom(page);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getTargetException());
         }
     }
     
     private PageState(PathPattern pathPattern) {
         this.pathPattern = pathPattern;
         parameterMap = new HashMap<String, String[]>();
+    }
+    
+    private void describeCustom(Page page) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        for (Method m : page.getClass().getMethods())
+            if (m.getAnnotation(CustomDescription.class) != null)
+                m.invoke(page, parameterMap);
     }
     
     private void describeDeclaredFields(Page page) throws IllegalArgumentException, IllegalAccessException {
