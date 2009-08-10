@@ -1,6 +1,7 @@
 package theweb.html;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,5 +122,14 @@ public class HtmlElement implements Markup {
 
     public List<Markup> getChildren() {
         return children;
+    }
+    
+    public HtmlElement clone() {
+        HtmlElement element = new HtmlElement(tagName);
+        
+        element.attributes = new HashMap<String, String>(attributes);
+        element.children = new ArrayList<Markup>(children);
+        
+        return element;
     }
 }
