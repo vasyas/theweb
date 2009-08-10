@@ -9,10 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
+import theweb.AbstractPage;
 import theweb.ContentOutcome;
+import theweb.Markup;
 import theweb.NoOutcome;
 import theweb.Outcome;
 import theweb.Page;
+import theweb.html.StringMarkup;
 import theweb.test.TestPage;
 
 public class PageExecutionTest extends TestCase {
@@ -144,5 +147,23 @@ public class PageExecutionTest extends TestCase {
             fail();
         } catch(RuntimeException e) {
         }
+    }
+    
+    @SuppressWarnings("unused")
+    public void testConvertMarkupToContentOutcome() throws Exception {
+        PageExecution execution = new PageExecution();
+        
+        execution.page = new AbstractPage("/") {
+            public Markup exec() {
+                return new StringMarkup("abc");
+            }
+        };
+        
+        execution.m = execution.page.getClass().getDeclaredMethod("exec");
+        execution.args = new Object[0];
+        
+        Outcome execute = execution.execute();
+        
+        assertTrue(execute instanceof ContentOutcome);
     }
 }
