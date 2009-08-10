@@ -29,13 +29,7 @@ public class ContentOutcome implements Outcome {
 
         PrintWriter writer = response.getWriter();
 
-        Messages messages = Messages.get();
-        
-        try {
-            writer.write(content);
-        } finally {
-            messages.clear();
-        }
+        writer.write(content);
         
         writer.flush();
     }
