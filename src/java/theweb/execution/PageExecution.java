@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import theweb.ContentOutcome;
+import theweb.Markup;
 import theweb.Outcome;
 import theweb.Page;
 import theweb.RenderOutcome;
@@ -28,6 +29,9 @@ class PageExecution implements Execution {
             
             if (result instanceof String)
                 return new ContentOutcome((String) result, "text/html; charset=UTF-8");
+            
+            if (result instanceof Markup)
+                return new ContentOutcome(((Markup) result).render(), "text/html; charset=UTF-8");
             
             return new RenderOutcome();
         } catch(InvocationTargetException e) {
