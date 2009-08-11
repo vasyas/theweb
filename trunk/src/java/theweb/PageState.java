@@ -51,6 +51,8 @@ public class PageState {
             if (!field.isAccessible()) field.setAccessible(true);
             
             if (Modifier.isTransient(field.getModifiers())) continue;
+            if (Modifier.isFinal(field.getModifiers())) continue;
+            if (Modifier.isStatic(field.getModifiers())) continue;
             
             Object value = field.get(page);
             

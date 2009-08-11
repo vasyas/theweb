@@ -44,7 +44,9 @@ public class PageStateTest extends TestCase {
         }
         
         public String a = "b";
-        public transient String c = "d";
+        public transient String c = "b";
+        public final String e = "b";
+        public static String f = "b";
     }
     
     @Override
