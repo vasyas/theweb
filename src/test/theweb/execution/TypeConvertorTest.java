@@ -51,4 +51,14 @@ public class TypeConvertorTest extends TestCase {
     private static void assertArrayEquals(Object[] l, Object[] object) {
         assertEquals(Arrays.toString(l), Arrays.toString(object));
     }
+    
+    public void testFloatingPoint() throws Exception {
+        assertEquals(1.5, convertor.convertValue("1.5", Double.class));
+        assertEquals(1.5f, convertor.convertValue("1.5", Float.class));
+        
+        assertEquals("1.5", convertor.convertValue(1.5, String.class));
+        assertEquals("1.5", convertor.convertValue(1.5f, String.class));
+        
+        assertEquals("1.5", convertor.convertValue(new Double[] { 1.5 }, String.class));
+    }
 }

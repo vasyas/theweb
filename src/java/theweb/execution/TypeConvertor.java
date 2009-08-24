@@ -15,6 +15,12 @@ public class TypeConvertor {
             if (Integer.class.equals(toClass) || Integer.TYPE.equals(toClass))
                 return Integer.parseInt((String) value);
             
+            if (Double.class.equals(toClass) || Double.TYPE.equals(toClass))
+                return Double.parseDouble((String) value);
+            
+            if (Float.class.equals(toClass) || Float.TYPE.equals(toClass))
+                return Float.parseFloat((String) value);
+            
             if (Boolean.class.equals(toClass) || Boolean.TYPE.equals(toClass))
                 return "true".equals(value);
             
@@ -31,7 +37,7 @@ public class TypeConvertor {
             return a;
         }
         
-        if (value instanceof Integer && toClass.equals(String.class))
+        if (value instanceof Number && toClass.equals(String.class))
             return "" + value;
         
         if (value instanceof Boolean && toClass.equals(String.class))
