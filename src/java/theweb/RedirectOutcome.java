@@ -16,6 +16,10 @@ public class RedirectOutcome implements Outcome {
         this(new PageState(page).view());
     }
     
+    public RedirectOutcome(Page page, String hash) {
+        this(new PageState(page).view() + "#" + hash);
+    }
+    
     @Override
     public void process(Page page, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(to);
