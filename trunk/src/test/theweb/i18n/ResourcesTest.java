@@ -94,4 +94,20 @@ public class ResourcesTest extends TestCase {
         
         assertEquals("tl", value);
     }
+    
+    public void testBugWithTwoReferences() throws Exception {
+        Resources.addBundle(new ClasspathResourceLocation("theweb/i18n/test_uk.properties"));
+        
+        Resources.setLocale("uk");
+        
+        assertEquals("Например, <i>1</i> или <i>55</i> 2", Resources.getText("main"));
+    }
+    
+    public void testEscapingBug() throws Exception {
+        Resources.addBundle(new ClasspathResourceLocation("theweb/i18n/test_uk.properties"));
+        
+        Resources.setLocale("uk");
+        
+        assertEquals("a\\b", Resources.getText("escapingSlash"));
+    }
 }

@@ -84,7 +84,7 @@ public class Resources {
         return key;
     }
     
-    private static Pattern referencesPattern = Pattern.compile("#\\{(.+)\\}");
+    private static Pattern referencesPattern = Pattern.compile("#\\{(.+?)\\}");
     
     private static String getTextInLocale(String key, String locale) {
         return getTextInLocaleRecursiveSafe(new HashSet<String>(), key, locale);
@@ -122,7 +122,7 @@ public class Resources {
             
             if (referencedValue == null) referencedValue = referencedKey;
             
-            m.appendReplacement(r, referencedValue);
+            m.appendReplacement(r, Matcher.quoteReplacement(referencedValue));
         }
         
         m.appendTail(r);
