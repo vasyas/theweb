@@ -34,6 +34,8 @@ public class ReflectionPopulatorTest extends TestCase {
         public Map<String, Nested> mapNested = new HashMap<String, Nested>();
         public Map<String, String> map = new HashMap<String, String>();
         
+        public Map<Integer, Integer> intMap = new HashMap<Integer, Integer>() { };
+        
         public void setProperty(String s) {
             this.s = s;
         }
@@ -106,6 +108,15 @@ public class ReflectionPopulatorTest extends TestCase {
         populator.populate(page, props);
         
         assertEquals("value", page.map.get("3"));
+    }
+    
+    // Only simple bounds like Map<Integer, String> are supported
+    public void testIntMap() throws Exception {
+        props.put("page.intMap[1]", "2");
+        
+        populator.populate(page, props);
+        
+        assertEquals(new Integer(2), page.intMap.get(1));
     }
     
     public void testProperty() throws Exception {
