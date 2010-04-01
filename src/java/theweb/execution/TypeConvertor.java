@@ -15,6 +15,9 @@ public class TypeConvertor {
             if (Integer.class.equals(toClass) || Integer.TYPE.equals(toClass))
                 return Integer.parseInt((String) value);
             
+            if (Long.class.equals(toClass) || Long.TYPE.equals(toClass))
+                return Long.parseLong((String) value);
+            
             if (Double.class.equals(toClass) || Double.TYPE.equals(toClass))
                 return Double.parseDouble((String) value);
             

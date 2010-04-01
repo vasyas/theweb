@@ -29,6 +29,11 @@ public class TypeConvertorTest extends TestCase {
         assertEquals(10, convertor.convertValue("10", Integer.class));
     }
     
+    public void testLongString(){
+        assertEquals("10", convertor.convertValue(10L, String.class));
+        assertEquals(10L, convertor.convertValue("10", Long.class));        
+    }
+    
     public void testBooleanString() {
         assertEquals("true", convertor.convertValue(true, String.class));
         assertEquals(true, convertor.convertValue("true", Boolean.class));
