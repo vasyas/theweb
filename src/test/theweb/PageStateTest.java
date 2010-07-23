@@ -1,5 +1,6 @@
 package theweb;
 
+import java.net.URLEncoder;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -123,5 +124,12 @@ public class PageStateTest extends TestCase {
     
     public void testEnum() throws Exception {
         assertEquals("/context/?page.item=apple", new PageState(new EnumStatePage()).view());
+    }
+    
+    public void testEncoding() throws Exception {
+        MockPageStringFields page = new MockPageStringFields();
+        page.field2 = "&";
+        
+        assertEquals("/context/base/test?page.field2=" + URLEncoder.encode("&", "UTF-8")+ "&page.field3=value", new PageState(page).action("test"));
     }
 }
