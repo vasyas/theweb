@@ -1,14 +1,8 @@
 package theweb;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import theweb.execution.TypeConvertor;
 
 /**
  * Used to transform page state into a set of request parameters
@@ -23,16 +17,7 @@ public class PageState {
     public PageState(Page page) {
         this(page.getPathPattern());
         
-        try {
-            describeDeclaredFields(page);
-            describeCustom(page);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getTargetException());
-        }
+        new Describer(parameterMap).describe(page);
     }
     
     private PageState(PathPattern pathPattern) {
@@ -40,45 +25,6 @@ public class PageState {
         parameterMap = new HashMap<String, String[]>();
     }
     
-    private void describeCustom(Page page) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        for (Method m : page.getClass().getMethods())
-            if (m.getAnnotation(CustomDescription.class) != null)
-                m.invoke(page, parameterMap);
-    }
-    
-    private void describeDeclaredFields(Page page) throws IllegalArgumentException, IllegalAccessException {
-        for (Field field : page.getClass().getFields()) {
-            if (!field.isAccessible()) field.setAccessible(true);
-            
-            if (Modifier.isTransient(field.getModifiers())) continue;
-            if (Modifier.isFinal(field.getModifiers())) continue;
-            if (Modifier.isStatic(field.getModifiers())) continue;
-            
-            Object value = field.get(page);
-            
-            String[] result = null;
-            
-            if (field.getType().isArray()) {
-                Object[] array = (Object[]) field.get(page);
-                result = new String[array.length];
-                
-                for (int i = 0; i < array.length; i ++) {
-                    String convertedValue = (String) new TypeConvertor().convertValue(array[i], String.class);
-                    
-                    result[i] = convertedValue;
-                }
-            } else {
-                String convertedValue = (String) new TypeConvertor().convertValue(value, String.class);
-                
-                if (convertedValue != null && !convertedValue.isEmpty())
-                    result = new String[] { convertedValue };
-            }
-            
-            if (result != null)
-                parameterMap.put("page." + field.getName(), result);
-        }
-    }
-
     public static PageState getCurrent() {
         return tl.get();
     }

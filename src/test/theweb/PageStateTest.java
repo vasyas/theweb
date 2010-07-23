@@ -105,4 +105,23 @@ public class PageStateTest extends TestCase {
     public void testCustomDescription() throws Exception {
         assertEquals("/context/base/?base=a&derived=b", new PageState(new CustomDescriptionPage()).view());
     }
+    
+    static class EnumStatePage extends AbstractPage {
+
+        public EnumStatePage() {
+            super("/");
+        }
+
+        public Item item = Item.apple;
+        
+        public String getLink(){
+            return new PageState(this).action("somelink"); 
+        }
+       
+        enum Item { apple, orange, lemon }
+    }
+    
+    public void testEnum() throws Exception {
+        assertEquals("/context/?page.item=apple", new PageState(new EnumStatePage()).view());
+    }
 }
