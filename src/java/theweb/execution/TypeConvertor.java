@@ -46,6 +46,9 @@ public class TypeConvertor {
         if (value instanceof Boolean && toClass.equals(String.class))
             return "" + value;
         
+        if (value instanceof Enum && toClass.equals(String.class))
+            return "" + value;
+        
         // try to convert component types
         if (value.getClass().isArray() && !toClass.isArray()) {
             Object element = null;
