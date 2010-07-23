@@ -1,5 +1,7 @@
 package theweb;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -107,7 +109,11 @@ public class PageState {
                 
                 url.append(key);
                 url.append("=");
-                url.append(value.toString());
+                
+                try {
+                    url.append(URLEncoder.encode(value.toString(), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                }
             }
         }
         
