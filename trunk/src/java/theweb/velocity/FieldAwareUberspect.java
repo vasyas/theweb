@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.apache.velocity.util.introspection.Info;
 import org.apache.velocity.util.introspection.UberspectImpl;
+import org.apache.velocity.util.introspection.VelMethod;
 import org.apache.velocity.util.introspection.VelPropertyGet;
 
 public class FieldAwareUberspect extends UberspectImpl {
@@ -33,6 +34,20 @@ public class FieldAwareUberspect extends UberspectImpl {
         if (get == null) get = super.getPropertyGet(obj, identifier, info);
         
         return get;
+    }
+    
+    @Override
+    public VelMethod getMethod(Object obj, String methodName, Object[] args, Info i) throws Exception {
+        VelMethod method = null;
+        
+        try {
+            method = new DeclaringMethod(obj, methodName, args);
+        } catch(Exception e) { }
+        
+        if (method == null)
+            method = super.getMethod(obj, methodName, args, i);
+        
+        return method;
     }
     
     public static class PublicFieldGet implements VelPropertyGet {
@@ -105,6 +120,61 @@ public class FieldAwareUberspect extends UberspectImpl {
         @Override
         public boolean isCacheable() {
             return false;
+        }
+        
+    }
+    
+    public static class DeclaringMethod implements VelMethod {
+        private final Method m;
+        
+        public DeclaringMethod(Object obj, String identifier, Object[] args) throws SecurityException, NoSuchMethodException {
+            m = findMethod(obj.getClass(), identifier, args);
+            
+            if (!m.isAccessible()) m.setAccessible(true);
+        }
+        
+        private Method findMethod(Class<?> cls, String name, Object[] args) {
+            outer:
+            for (Method m : cls.getDeclaredMethods()) {
+                if (!m.getName().equals(name)) continue;
+
+                Class<?>[] parameterTypes = m.getParameterTypes();
+                if (parameterTypes.length != args.length) continue;
+                
+                for (int i = 0; i < args.length; i ++) {
+                    if (args[i] == null && parameterTypes[i].isPrimitive()) continue outer;
+                    
+                    if (args[i] != null) 
+                        if (!parameterTypes[i].isAssignableFrom(args[i].getClass()))
+                            continue outer;
+                }
+                
+                return m;
+            }
+            
+            if (cls.getSuperclass() == null) return null;
+            
+            return findMethod(cls.getSuperclass(), name, args);
+        }
+        
+        @Override
+        public String getMethodName() {
+            return m.getName();
+        }
+        
+        @Override
+        public Object invoke(Object obj, Object[] args) throws Exception {
+            return m.invoke(obj, args);
+        }
+        
+        @Override
+        public boolean isCacheable() {
+            return false;
+        }
+
+        @Override
+        public Class<?> getReturnType() {
+            return m.getReturnType();
         }
         
     }
