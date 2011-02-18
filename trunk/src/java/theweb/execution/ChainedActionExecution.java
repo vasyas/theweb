@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import theweb.Outcome;
 import theweb.Page;
 
 class ChainedActionExecution implements Execution {
@@ -26,7 +25,7 @@ class ChainedActionExecution implements Execution {
         this.response = response;
     }
 
-    public Outcome execute() throws IOException {
+    public Object execute() throws IOException {
         if ( current.hasNext() ) {
             PageInterceptor interceptor = current.next();
             return interceptor.execute(this, request, response);

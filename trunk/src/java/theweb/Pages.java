@@ -58,9 +58,10 @@ public class Pages {
             
             PageState.setCurrent(new PageState(page));
         
-            Outcome outcome = new Executor(interceptors).exec(page, properties, request, response);
+            Object result = new Executor(interceptors).exec(page, properties, request, response);
             
-            outcome.process(page, request, response);
+            if (result instanceof Outcome) 
+                ((Outcome) result).process(page, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -69,9 +70,12 @@ public class Pages {
     }
 
     private Page getPage(HttpServletRequest request, Map<String, Object> properties) {
-        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
+        String path;
         
-        if (path == null) path = "";
+        if (request.getPathInfo() == null)
+            path = request.getServletPath();
+        else
+            path = request.getPathInfo();
         
         for (Page page : pages) {
             Map<String, String> matches = page.getPathPattern().matches(path);

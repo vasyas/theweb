@@ -9,13 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
-import theweb.AbstractPage;
 import theweb.ContentOutcome;
-import theweb.Markup;
 import theweb.NoOutcome;
 import theweb.Outcome;
 import theweb.Page;
-import theweb.html.StringMarkup;
 import theweb.test.TestPage;
 
 public class PageExecutionTest extends TestCase {
@@ -27,7 +24,7 @@ public class PageExecutionTest extends TestCase {
         interceptors.add(new DelegatingInterceptor("2", sequence));
         interceptors.add(new DelegatingInterceptor("3", sequence));
 
-        Outcome outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
+        Object outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
         assertEquals(mockOutcome, outcome);
         assertEquals("123", sequence.toString());
     }
@@ -42,7 +39,7 @@ public class PageExecutionTest extends TestCase {
         interceptors.add(new TerminatingInterceptor("t", o1, sequence));
         interceptors.add(new DelegatingInterceptor("3", sequence));
 
-        Outcome outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
+        Object outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
         assertEquals(o1, outcome);
         assertEquals("1t", sequence.toString());
     }
@@ -91,7 +88,7 @@ public class PageExecutionTest extends TestCase {
         }
 
         @Override
-        public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        public Object execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException {
             sequence.append(name);
             return execution.execute();
         }
@@ -132,7 +129,7 @@ public class PageExecutionTest extends TestCase {
     }
     
     public void testInaccessibleMethod() throws Exception {
-        PageExecution execution = new PageExecution();
+        MethodExecution execution = new MethodExecution();
 
         execution.page = TestPage.page;
         execution.args = new Object[0];
@@ -147,23 +144,5 @@ public class PageExecutionTest extends TestCase {
             fail();
         } catch(RuntimeException e) {
         }
-    }
-    
-    @SuppressWarnings("unused")
-    public void testConvertMarkupToContentOutcome() throws Exception {
-        PageExecution execution = new PageExecution();
-        
-        execution.page = new AbstractPage("/") {
-            public Markup exec() {
-                return new StringMarkup("abc");
-            }
-        };
-        
-        execution.m = execution.page.getClass().getDeclaredMethod("exec");
-        execution.args = new Object[0];
-        
-        Outcome execute = execution.execute();
-        
-        assertTrue(execute instanceof ContentOutcome);
     }
 }

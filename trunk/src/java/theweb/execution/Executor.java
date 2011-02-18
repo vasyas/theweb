@@ -22,7 +22,7 @@ public class Executor {
         this.interceptors = interceptors;
     }
     
-    public Outcome exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Object exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
         
         String method = null;
@@ -76,7 +76,7 @@ public class Executor {
                 }
             }
             
-            PageExecution invocation = new PageExecution();
+            MethodExecution invocation = new MethodExecution();
             invocation.m = m;
             invocation.args = args;
             invocation.page = page;
