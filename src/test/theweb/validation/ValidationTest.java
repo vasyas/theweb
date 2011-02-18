@@ -30,7 +30,6 @@ public class ValidationTest extends TestCase {
         Validation.validate(new Derived());
         
         assertEquals(2, Messages.get().getErrors().size());
-        
     }
     
     public void testValidateNotAccessibleFields() throws Exception {
