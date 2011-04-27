@@ -1,4 +1,4 @@
-package theweb.i18n;
+package theweb.resources;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,4 +32,9 @@ public class FileResourceLocation implements ResourceLocation {
 	public String toString() {
 		return "file://" + file.getPath();
 	}
+
+    @Override
+    public String getPath() {
+        return file.getPath();
+    }
 }

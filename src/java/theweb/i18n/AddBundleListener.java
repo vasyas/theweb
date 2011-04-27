@@ -1,8 +1,11 @@
 package theweb.i18n;
 
+import theweb.resources.ResourceListener;
+import theweb.resources.ResourceLocation;
+
 public class AddBundleListener implements ResourceListener {
 
-	public void bundleFound(ResourceLocation resourceLocation) {
+	public void resourceFound(ResourceLocation resourceLocation) {
 		if (!resourceLocation.getName().endsWith(".properties"))
 			return;
 		
