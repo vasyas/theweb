@@ -48,7 +48,7 @@ class Describer {
             
             Object value = field.get(object);
             
-            if (field.getAnnotation(Describe.class) != null) {
+            if (value != null && field.getAnnotation(Describe.class) != null) {
                 describe(value, prefix + field.getName() + ".");
                 continue;
             }

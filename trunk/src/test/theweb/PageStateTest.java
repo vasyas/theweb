@@ -132,4 +132,23 @@ public class PageStateTest extends TestCase {
         
         assertEquals("/context/base/test?page.field2=" + URLEncoder.encode("&", "UTF-8")+ "&page.field3=value", new PageState(page).action("test"));
     }
+
+    static class Inner {
+        public String a = "b";
+    }
+    
+    static class MockOuterPage extends AbstractPage {
+        public MockOuterPage() {
+            super("/base/");
+        }
+        
+        @Describe
+        public Inner inner;
+    }
+    
+    public void testDescribeNull() throws Exception {
+        MockOuterPage page = new MockOuterPage();
+        
+        assertEquals("/context/base/test", new PageState(page).action("test"));
+    }
 }
