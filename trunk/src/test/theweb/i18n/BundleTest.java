@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Map;
 
+import theweb.resources.ClasspathResourceLocation;
+
 import junit.framework.TestCase;
 
 public class BundleTest extends TestCase {

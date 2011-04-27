@@ -1,4 +1,4 @@
-package theweb.i18n;
+package theweb.resources;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class ResourceScanner {
     	
         for (File file : root.listFiles()) {
             if (file.isFile())
-                listener.bundleFound(new FileResourceLocation(file));
+                listener.resourceFound(new FileResourceLocation(file));
             
             if (file.isDirectory())
                 findInFileSystem(file);
@@ -62,7 +62,7 @@ public class ResourceScanner {
 		        JarEntry entry = entries.nextElement();
 		        
 		        if (!entry.isDirectory()) {
-		        	listener.bundleFound(new ClasspathResourceLocation(entry.getName()));
+		        	listener.resourceFound(new ClasspathResourceLocation(entry.getName()));
 		        }
 		    }
 		    
@@ -105,7 +105,7 @@ public class ResourceScanner {
 			        JarEntry entry = entries.nextElement();
 			        
 			        if (!entry.isDirectory()) {
-			        	listener.bundleFound(new ServletContextResourceLocation(servletContext, entry.getName()));
+			        	listener.resourceFound(new ServletContextResourceLocation(servletContext, entry.getName()));
 			        }
 			    }
 			    
