@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import theweb.Action;
 import theweb.DefaultAction;
 import theweb.Outcome;
 import theweb.Page;
@@ -43,7 +44,7 @@ public class Executor {
         Method m = null;
         
         for (Method m1 : page.getClass().getMethods()) {
-            if (m1.getName().equals(name)) {
+            if (matchActionName(name, m1)) {
                 m = m1;
                 break;
             }
@@ -102,5 +103,16 @@ public class Executor {
                 return page;
             }
         };
+    }
+
+    private boolean matchActionName(String action, Method method) {
+        if (action == null) return false;
+        
+        if (action.equals(method.getName())) return true;
+        
+        Action annotation = method.getAnnotation(Action.class);
+        if (annotation != null && action.equals(annotation.value())) return true;
+        
+        return false;
     }
 }
