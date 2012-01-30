@@ -6,11 +6,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import theweb.Action;
 import theweb.DefaultAction;
+import theweb.HttpExchange;
 import theweb.Outcome;
 import theweb.Page;
 import theweb.Param;
@@ -23,8 +21,8 @@ public class Executor {
         this.interceptors = interceptors;
     }
     
-    public Object exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
+    public Object exec(Page page, Map<String, Object> properties, HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestPath();
         
         String method = null;
         
@@ -35,7 +33,7 @@ public class Executor {
         
         Execution pageExecution = getExecution(properties, page, method);
         
-        ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, request, response, pageExecution);
+        ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, exchange, pageExecution);
 
         return chainedActionInvokation.execute();
     }
