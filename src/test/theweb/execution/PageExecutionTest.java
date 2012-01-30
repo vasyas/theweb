@@ -5,11 +5,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import junit.framework.TestCase;
 import theweb.ContentOutcome;
+import theweb.HttpExchange;
 import theweb.NoOutcome;
 import theweb.Outcome;
 import theweb.Page;
@@ -24,7 +22,7 @@ public class PageExecutionTest extends TestCase {
         interceptors.add(new DelegatingInterceptor("2", sequence));
         interceptors.add(new DelegatingInterceptor("3", sequence));
 
-        Object outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
+        Object outcome = new ChainedActionExecution(interceptors, null, mockExecution).execute();
         assertEquals(mockOutcome, outcome);
         assertEquals("123", sequence.toString());
     }
@@ -39,7 +37,7 @@ public class PageExecutionTest extends TestCase {
         interceptors.add(new TerminatingInterceptor("t", o1, sequence));
         interceptors.add(new DelegatingInterceptor("3", sequence));
 
-        Object outcome = new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
+        Object outcome = new ChainedActionExecution(interceptors, null, mockExecution).execute();
         assertEquals(o1, outcome);
         assertEquals("1t", sequence.toString());
     }
@@ -53,7 +51,7 @@ public class PageExecutionTest extends TestCase {
         interceptors.add(new DelegatingInterceptor("3", sequence));
 
         try {
-            new ChainedActionExecution(interceptors, null, null, mockExecution).execute();
+            new ChainedActionExecution(interceptors, null, mockExecution).execute();
             fail();
         } catch (RuntimeException e) {
             assertEquals("1e", sequence.toString());
@@ -88,7 +86,7 @@ public class PageExecutionTest extends TestCase {
         }
 
         @Override
-        public Object execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        public Object execute(Execution execution, HttpExchange exchange) throws IOException {
             sequence.append(name);
             return execution.execute();
         }
@@ -106,7 +104,7 @@ public class PageExecutionTest extends TestCase {
         }
 
         @Override
-        public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) {
+        public Outcome execute(Execution execution, HttpExchange exchange) {
             sequence.append(name);
             return value;
         }
@@ -122,7 +120,7 @@ public class PageExecutionTest extends TestCase {
         }
 
         @Override
-        public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) {
+        public Outcome execute(Execution execution, HttpExchange exchange) {
             sequence.append(name);
             throw new RuntimeException("not found");
         }

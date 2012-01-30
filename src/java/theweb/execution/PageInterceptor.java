@@ -2,9 +2,8 @@ package theweb.execution;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import theweb.HttpExchange;
 
 public interface PageInterceptor {
-    Object execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException;
+    Object execute(Execution execution, HttpExchange exchange) throws IOException;
 }

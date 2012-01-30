@@ -1,6 +1,5 @@
 package theweb.html;
 
-import theweb.html.HtmlElement;
 import junit.framework.TestCase;
 
 public class HtmlElementTest extends TestCase {

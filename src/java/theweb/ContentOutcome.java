@@ -3,11 +3,7 @@ package theweb;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 public class ContentOutcome implements Outcome {
-
     private final String content;
     private final String contentType;
 
@@ -21,13 +17,13 @@ public class ContentOutcome implements Outcome {
     }
 
     @Override
-    public void process(Page page, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType(contentType);
-        response.addHeader("Pragma", "no-cache");
-        response.addHeader("Expires", "0");
-        response.addHeader("Etag", "" + Math.random());
+    public void process(Page page, HttpExchange exchange) throws IOException {
+        exchange.setContentType(contentType);
+        exchange.addHeader("Pragma", "no-cache");
+        exchange.addHeader("Expires", "0");
+        exchange.addHeader("Etag", "" + Math.random());
 
-        PrintWriter writer = response.getWriter();
+        PrintWriter writer = exchange.getWriter();
 
         writer.write(content);
         

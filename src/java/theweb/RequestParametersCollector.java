@@ -3,13 +3,11 @@ package theweb;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class RequestParametersCollector implements Collector {
     @SuppressWarnings("unchecked")
-    public void collect(Map<String, Object> properties, HttpServletRequest request) {
+    public void collect(Map<String, Object> properties, HttpExchange exchange) {
         // trim all Strings
-        for (Map.Entry entry : (Set<Map.Entry>)request.getParameterMap().entrySet()) {
+        for (Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) exchange.getParameters().entrySet()) {
             String name = (String) entry.getKey();
             Object value = entry.getValue();
 

@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import theweb.execution.Executor;
 import theweb.execution.PageInterceptor;
 
@@ -38,30 +35,30 @@ public class Pages {
     
     public Populator populator = new ReflectionPopulator(true);
 
-    public void invoke(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        new ContextInfo(request.getContextPath());
+    public void invoke(HttpExchange exchange) throws IOException {
+        new ContextInfo(exchange.getContextPath());
         
         Map<String, Object> properties = new LinkedHashMap<String, Object>();
         
-        Page page = getPage(request, properties);
+        Page page = getPage(exchange, properties);
         
         if (page == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            exchange.sendError(404);
             return;
         }
         
         try {
             for (Collector collector : collectors)
-                collector.collect(properties, request);
+                collector.collect(properties, exchange);
             
             populator.populate(page, properties);
             
             PageState.setCurrent(new PageState(page));
         
-            Object result = new Executor(interceptors).exec(page, properties, request, response);
+            Object result = new Executor(interceptors).exec(page, properties, exchange);
             
             if (result instanceof Outcome) 
-                ((Outcome) result).process(page, request, response);
+                ((Outcome) result).process(page, exchange);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -69,13 +66,8 @@ public class Pages {
         }
     }
 
-    private Page getPage(HttpServletRequest request, Map<String, Object> properties) {
-        String path;
-        
-        if (request.getPathInfo() == null)
-            path = request.getServletPath();
-        else
-            path = request.getPathInfo();
+    private Page getPage(HttpExchange exchange, Map<String, Object> properties) {
+        String path = exchange.getRequestPath();
         
         for (Page page : pages) {
             Map<String, String> matches = page.getPathPattern().matches(path);
