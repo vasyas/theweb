@@ -2,7 +2,6 @@ package theweb.test;
 
 import theweb.AbstractPage;
 import theweb.Page;
-import theweb.validation.NotBlank;
 
 public class TestPage {
     @SuppressWarnings("unused")
@@ -14,10 +13,7 @@ public class TestPage {
         void action2() {
         }
         
-        @NotBlank
         public String a;
-        
-        @NotBlank
         String b;
         
         private String c;
