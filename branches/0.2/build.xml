@@ -1,0 +1,17 @@
+<project name="theweb" default="jar">
+    <property name="version" value="0.2"/>
+
+    <path id="classpath">
+        <fileset dir="lib"/>
+    </path>
+
+    <target name="jar">
+        <delete dir="target/classes"/>
+        <mkdir dir="target/classes" />
+
+        <javac debug="true" srcdir="src/java" destdir="target/classes" classpathref="classpath"/>
+        <copydir src="src/java" includes="**/*" excludes="**/*.java" dest="target/classes"/>
+
+        <jar file="target/theweb-${version}.jar" basedir="target/classes"/>
+    </target>
+</project>
