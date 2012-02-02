@@ -48,7 +48,7 @@ class SunserverUtils {
         String pairs[] = query.split("[&]");
 
         for (String pair : pairs) {
-            String param[] = pair.split("[=]");
+            String param[] = pair.split("[=]", -1);
 
             if (param.length == 0) continue;
             
