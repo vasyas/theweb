@@ -17,7 +17,12 @@ public class SunserverHttpExchange implements HttpExchange {
 
     @Override
     public String getContextPath() {
-        return exchange.getHttpContext().getPath();
+        String path = exchange.getHttpContext().getPath();
+        
+        if (path.startsWith("/"))
+            path = path.substring(1);
+        
+        return path;
     }
 
     @Override
