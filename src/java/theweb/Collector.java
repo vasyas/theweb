@@ -2,6 +2,10 @@ package theweb;
 
 import java.util.Map;
 
-interface Collector {
-    void collect(Map<String, Object> properties, HttpExchange exchange);
+import javax.servlet.http.HttpServletRequest;
+
+public interface Collector {
+
+    void collect(Map<String, Object> properties, HttpServletRequest request);
+
 }

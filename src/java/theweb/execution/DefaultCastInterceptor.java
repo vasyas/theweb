@@ -2,8 +2,10 @@ package theweb.execution;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import theweb.ContentOutcome;
-import theweb.HttpExchange;
 import theweb.Markup;
 import theweb.Outcome;
 import theweb.RenderOutcome;
@@ -11,7 +13,7 @@ import theweb.RenderOutcome;
 public class DefaultCastInterceptor implements PageInterceptor {
 
     @Override
-    public Outcome execute(Execution execution, HttpExchange exchange) throws IOException {
+    public Outcome execute(Execution execution, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Object result = execution.execute();
         
         if (result instanceof Outcome) 

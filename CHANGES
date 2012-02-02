@@ -1,3 +1,0 @@
-0.3
- - add suport for Sun's built-in HTTP server
- - removed validation package from the codebase (incompatible change)
