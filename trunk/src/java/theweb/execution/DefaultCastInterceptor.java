@@ -6,7 +6,7 @@ import theweb.ContentOutcome;
 import theweb.HttpExchange;
 import theweb.Markup;
 import theweb.Outcome;
-import theweb.RenderOutcome;
+import theweb.RedirectOutcome;
 
 public class DefaultCastInterceptor implements PageInterceptor {
 
@@ -23,6 +23,6 @@ public class DefaultCastInterceptor implements PageInterceptor {
         if (result instanceof Markup)
             return new ContentOutcome(((Markup) result).render(), "text/html; charset=UTF-8");
         
-        return new RenderOutcome();
+        return new RedirectOutcome(execution.getPage());
     }
 }
