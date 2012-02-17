@@ -17,6 +17,10 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         return true;
     }
     
+    public String getFileName() {
+        return null;
+    }
+    
     @Override
     public void process(Page page, HttpExchange exchange) throws Exception {
         exchange.setContentType(getContentType());
@@ -38,7 +42,10 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         }
 
         String contentDisposition = isAttachment() ? "attachment" : "inline";
+        if (getFileName() != null) contentDisposition += "; filename=" + getFileName();
+        
         exchange.addHeader("Content-Disposition", contentDisposition);
+        
         
         byte[] buffer = new byte[1024];
         InputStream source = getInputStream();
