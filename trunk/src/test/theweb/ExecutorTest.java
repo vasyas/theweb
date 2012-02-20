@@ -1,5 +1,6 @@
 package theweb;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -51,6 +52,11 @@ public class ExecutorTest extends TestCase {
 
         @Override
         public Map<String, Object> getParameters() {
+            return null;
+        }
+        
+        @Override
+        public InputStream getInputStream() {
             return null;
         }
 
