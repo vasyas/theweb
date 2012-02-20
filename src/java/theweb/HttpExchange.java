@@ -1,5 +1,6 @@
 package theweb;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -9,6 +10,7 @@ public interface HttpExchange {
     String getRequestPath();
     String getHeader(String name);
     Map<String, Object> getParameters();
+    InputStream getInputStream();
 
     void setContentType(String contentType);
     void setContentLength(long length);

@@ -1,6 +1,7 @@
 package theweb.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -43,6 +44,15 @@ public class ServletHttpExchange implements HttpExchange {
     @Override
     public Map<String, Object> getParameters() {
         return request.getParameterMap();
+    }
+    
+    @Override
+    public InputStream getInputStream() {
+        try {
+            return request.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
