@@ -1,6 +1,5 @@
 package theweb.execution;
 
-import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -28,11 +27,6 @@ public class TypeConvertorTest extends TestCase {
     public void testIntString() {
         assertEquals("10", convertor.convertValue(10, String.class));
         assertEquals(10, convertor.convertValue("10", Integer.class));
-    }
-    
-    public void testLongString(){
-        assertEquals("10", convertor.convertValue(10L, String.class));
-        assertEquals(10L, convertor.convertValue("10", Long.class));        
     }
     
     public void testBooleanString() {
@@ -66,9 +60,5 @@ public class TypeConvertorTest extends TestCase {
         assertEquals("1.5", convertor.convertValue(1.5f, String.class));
         
         assertEquals("1.5", convertor.convertValue(new Double[] { 1.5 }, String.class));
-    }
-    
-    public void testFromEnumToString() throws Exception {
-        assertEquals("RUNTIME", new TypeConvertor().convertValue(RetentionPolicy.RUNTIME, String.class));
     }
 }

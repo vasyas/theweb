@@ -1,7 +1,6 @@
 package theweb.i18n;
 
 import junit.framework.TestCase;
-import theweb.resources.ClasspathResourceLocation;
 
 public class ResourcesTest extends TestCase {
     

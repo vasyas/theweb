@@ -1,6 +1,5 @@
 package theweb;
 
-import java.net.URLEncoder;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -105,50 +104,5 @@ public class PageStateTest extends TestCase {
     
     public void testCustomDescription() throws Exception {
         assertEquals("/context/base/?base=a&derived=b", new PageState(new CustomDescriptionPage()).view());
-    }
-    
-    static class EnumStatePage extends AbstractPage {
-
-        public EnumStatePage() {
-            super("/");
-        }
-
-        public Item item = Item.apple;
-        
-        public String getLink(){
-            return new PageState(this).action("somelink"); 
-        }
-       
-        enum Item { apple, orange, lemon }
-    }
-    
-    public void testEnum() throws Exception {
-        assertEquals("/context/?page.item=apple", new PageState(new EnumStatePage()).view());
-    }
-    
-    public void testEncoding() throws Exception {
-        MockPageStringFields page = new MockPageStringFields();
-        page.field2 = "&";
-        
-        assertEquals("/context/base/test?page.field2=" + URLEncoder.encode("&", "UTF-8")+ "&page.field3=value", new PageState(page).action("test"));
-    }
-
-    static class Inner {
-        public String a = "b";
-    }
-    
-    static class MockOuterPage extends AbstractPage {
-        public MockOuterPage() {
-            super("/base/");
-        }
-        
-        @Describe
-        public Inner inner;
-    }
-    
-    public void testDescribeNull() throws Exception {
-        MockOuterPage page = new MockOuterPage();
-        
-        assertEquals("/context/base/test", new PageState(page).action("test"));
     }
 }

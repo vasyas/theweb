@@ -5,26 +5,31 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
-import theweb.HttpExchange;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import theweb.Outcome;
 import theweb.Page;
 
 class ChainedActionExecution implements Execution {
     private Iterator<PageInterceptor> current;
     private Execution lastExecution;
 
-    private HttpExchange exchange;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
 
-    public ChainedActionExecution(List<PageInterceptor> interceptors, HttpExchange exchange, Execution last) {
+    public ChainedActionExecution(List<PageInterceptor> interceptors, HttpServletRequest request, HttpServletResponse response, Execution last) {
         this.current = interceptors.iterator();
         
         this.lastExecution = last;
-        this.exchange = exchange;
+        this.request = request;
+        this.response = response;
     }
 
-    public Object execute() throws IOException {
+    public Outcome execute() throws IOException {
         if ( current.hasNext() ) {
             PageInterceptor interceptor = current.next();
-            return interceptor.execute(this, exchange);
+            return interceptor.execute(this, request, response);
         }
 
         return lastExecution.execute();

@@ -3,6 +3,9 @@ package theweb;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public abstract class AbstractDownloadOutcome implements Outcome {
     
     public abstract String getContentType();
@@ -17,39 +20,32 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         return true;
     }
     
-    public String getFileName() {
-        return null;
-    }
-    
     @Override
-    public void process(Page page, HttpExchange exchange) throws Exception {
-        exchange.setContentType(getContentType());
+    public void process(Page page, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.setContentType(getContentType());
 
         if (!isCacheable()) {
-            String userAgent = exchange.getHeader("User-Agent");
+            String userAgent = request.getHeader("User-Agent");
             
             if (userAgent != null && !userAgent.contains("MSIE"))
                 //IE 6.0 SP1 fails to save files with such header
                 //http://support.microsoft.com/default.aspx?scid=kb;en-us;812935&Product=ie600
-                exchange.addHeader("Cache-Control", "no-cache"); 
+                response.setHeader("Cache-Control", "no-cache"); 
 
-            exchange.addHeader("Pragma", "no-cache");
-            exchange.addHeader("Pragma-directive", "no-cache");
-            exchange.addHeader("Cache-Directive", "no-cache");
-            exchange.addHeader("Expires", "0");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Pragma-directive", "no-cache");
+            response.setHeader("Cache-Directive", "no-cache");
+            response.setHeader("Expires", "0");
             
-            exchange.setContentLength(getSize());
+            response.setContentLength(getSize());
         }
 
         String contentDisposition = isAttachment() ? "attachment" : "inline";
-        if (getFileName() != null) contentDisposition += "; filename=" + getFileName();
-        
-        exchange.addHeader("Content-Disposition", contentDisposition);
-        
+        response.setHeader("Content-Disposition", contentDisposition);
         
         byte[] buffer = new byte[1024];
         InputStream source = getInputStream();
-        OutputStream target = exchange.getOutputStream();
+        OutputStream target = response.getOutputStream();
         
         while (true) {
             int actuallyRead = source.read(buffer);

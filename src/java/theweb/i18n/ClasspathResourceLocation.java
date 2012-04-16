@@ -1,4 +1,4 @@
-package theweb.resources;
+package theweb.i18n;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -21,11 +21,6 @@ public class ClasspathResourceLocation implements ResourceLocation {
 
 	public String getName() {
 		return name;
-	}
-	
-	@Override
-	public String getPath() {
-	    return getName();
 	}
 
 	public long lastModified() {

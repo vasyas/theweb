@@ -15,9 +15,6 @@ public class TypeConvertor {
             if (Integer.class.equals(toClass) || Integer.TYPE.equals(toClass))
                 return Integer.parseInt((String) value);
             
-            if (Long.class.equals(toClass) || Long.TYPE.equals(toClass))
-                return Long.parseLong((String) value);
-            
             if (Double.class.equals(toClass) || Double.TYPE.equals(toClass))
                 return Double.parseDouble((String) value);
             
@@ -44,9 +41,6 @@ public class TypeConvertor {
             return "" + value;
         
         if (value instanceof Boolean && toClass.equals(String.class))
-            return "" + value;
-        
-        if (value instanceof Enum && toClass.equals(String.class))
             return "" + value;
         
         // try to convert component types

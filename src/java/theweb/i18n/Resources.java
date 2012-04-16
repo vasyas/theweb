@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import theweb.resources.ResourceLocation;
-
 public class Resources {
 	public static void addBundle(ResourceLocation location) {  
         int begin = location.getName().lastIndexOf('_');

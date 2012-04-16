@@ -1,10 +1,11 @@
-package theweb.resources;
+package theweb.i18n;
 
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 
 public class ServletContextResourceLocation implements ResourceLocation {
+
 	private final ServletContext servletContext;
 	private final String name;
 
@@ -22,13 +23,9 @@ public class ServletContextResourceLocation implements ResourceLocation {
 		return "Servlet:" + name;
 	}
 
-	@Override
-	public String getPath() {
-	    return getName();
-	}
-	
 	public long lastModified() {
 		// no reloading for servlet context resources
 		return 0;
 	}
+
 }

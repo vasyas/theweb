@@ -6,9 +6,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import theweb.Action;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import theweb.DefaultAction;
-import theweb.HttpExchange;
 import theweb.Outcome;
 import theweb.Page;
 import theweb.Param;
@@ -21,8 +22,8 @@ public class Executor {
         this.interceptors = interceptors;
     }
     
-    public Object exec(Page page, Map<String, Object> properties, HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestPath();
+    public Outcome exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
         
         String method = null;
         
@@ -33,7 +34,7 @@ public class Executor {
         
         Execution pageExecution = getExecution(properties, page, method);
         
-        ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, exchange, pageExecution);
+        ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, request, response, pageExecution);
 
         return chainedActionInvokation.execute();
     }
@@ -42,7 +43,7 @@ public class Executor {
         Method m = null;
         
         for (Method m1 : page.getClass().getMethods()) {
-            if (matchActionName(name, m1)) {
+            if (m1.getName().equals(name)) {
                 m = m1;
                 break;
             }
@@ -75,7 +76,7 @@ public class Executor {
                 }
             }
             
-            MethodExecution invocation = new MethodExecution();
+            PageExecution invocation = new PageExecution();
             invocation.m = m;
             invocation.args = args;
             invocation.page = page;
@@ -101,16 +102,5 @@ public class Executor {
                 return page;
             }
         };
-    }
-
-    private boolean matchActionName(String action, Method method) {
-        if (action == null) return false;
-        
-        if (action.equals(method.getName())) return true;
-        
-        Action annotation = method.getAnnotation(Action.class);
-        if (annotation != null && action.equals(annotation.value())) return true;
-        
-        return false;
     }
 }

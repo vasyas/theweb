@@ -7,8 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import theweb.resources.ResourceLocation;
-
 class Bundle {
     private final ResourceLocation location;
     

@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.Map;
 
 import junit.framework.TestCase;
-import theweb.resources.ClasspathResourceLocation;
 
 public class BundleTest extends TestCase {
     public void testLoad() {
