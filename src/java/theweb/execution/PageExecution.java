@@ -50,4 +50,9 @@ class PageExecution implements Execution {
     public Page getPage() {
         return page;
     }
+    
+    @Override
+    public Object[] getArgs() {
+        return args;
+    }
 }

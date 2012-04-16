@@ -9,54 +9,41 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import theweb.DefaultAction;
 import theweb.Outcome;
 import theweb.Page;
 import theweb.Param;
 import theweb.RenderOutcome;
 
 public class Executor {
+	private final List<MethodMatcher> methodMatchers;
     private final List<PageInterceptor> interceptors;
 
-    public Executor(List<PageInterceptor> interceptors) {
-        this.interceptors = interceptors;
+    public Executor(List<MethodMatcher> methodMatchers, List<PageInterceptor> interceptors) {
+        this.methodMatchers = methodMatchers;
+		this.interceptors = interceptors;
     }
     
     public Outcome exec(Page page, Map<String, Object> properties, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
-        
-        String method = null;
-        
-        int idx = path.lastIndexOf('/');
-        
-        if (idx != -1 && idx != path.length() - 1)
-            method = path.substring(idx + 1);
-        
-        Execution pageExecution = getExecution(properties, page, method);
+        Execution pageExecution = getExecution(page, request, properties);
         
         ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, request, response, pageExecution);
 
         return chainedActionInvokation.execute();
     }
 
-    private Execution getExecution(Map<String, Object> properties, final Page page, String name) {
-        Method m = null;
+    private Method findMethod(Page page, HttpServletRequest request, Map<String, Object> properties) {
+    	for (MethodMatcher methodMatcher : methodMatchers) {
+    		Method method = methodMatcher.getMethod(page, request, properties);
+    		
+    		if (method != null) return method;
+    	}
+    	
+    	return null;
+    }
+    
+    private Execution getExecution(final Page page, HttpServletRequest request, Map<String, Object> properties) {
+        Method m = findMethod(page, request, properties);
         
-        for (Method m1 : page.getClass().getMethods()) {
-            if (m1.getName().equals(name)) {
-                m = m1;
-                break;
-            }
-        }
-        
-        if (m == null)
-            for (Method m1 : page.getClass().getMethods()) {
-                if (m1.getAnnotation(DefaultAction.class) != null) {
-                    m = m1;
-                    break;
-                }
-            }
-
         if (m != null) {
             Object[] args = new Object[m.getParameterTypes().length];
             
@@ -100,6 +87,11 @@ public class Executor {
             @Override
             public Page getPage() {
                 return page;
+            }
+            
+            @Override
+            public Object[] getArgs() {
+                return null;
             }
         };
     }

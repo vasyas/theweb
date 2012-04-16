@@ -44,4 +44,9 @@ class ChainedActionExecution implements Execution {
     public Page getPage() {
         return lastExecution.getPage();
     }
+    
+    @Override
+    public Object[] getArgs() {
+        return lastExecution.getArgs();
+    }
 }

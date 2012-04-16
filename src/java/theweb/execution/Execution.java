@@ -9,6 +9,7 @@ import theweb.Page;
 public interface Execution {
     Outcome execute() throws IOException;
 
+    Object[] getArgs();
     Method getMethod();
     Page getPage();
 }

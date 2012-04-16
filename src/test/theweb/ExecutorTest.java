@@ -1,10 +1,15 @@
 package theweb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.TestCase;
+import theweb.execution.DefaultActionMethodMatcher;
 import theweb.execution.Executor;
+import theweb.execution.MethodMatcher;
+import theweb.execution.NameMethodMatcher;
 import theweb.execution.PageInterceptor;
 
 public class ExecutorTest extends TestCase {
@@ -24,8 +29,12 @@ public class ExecutorTest extends TestCase {
         }
     }
     
+    private List<MethodMatcher> defaultMatchers() {
+    	return Arrays.asList(new NameMethodMatcher(), new DefaultActionMethodMatcher());
+    }
+    
     public void testDefaultAction() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         MockHttpServletRequest r = new MockHttpServletRequest();
         r.servletPath = "/";
@@ -35,7 +44,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testDefaultActionNoMatchingMethod() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         MockHttpServletRequest r = new MockHttpServletRequest();
         r.servletPath = "/asdfasdf";
@@ -45,7 +54,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testDefaultActionExistingMethod() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         MockHttpServletRequest r = new MockHttpServletRequest();
         r.servletPath = "/toString";
@@ -72,7 +81,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testSameMethodInBaseSuperClass() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         MockHttpServletRequest r = new MockHttpServletRequest();
         r.servletPath = "/execute";
@@ -85,7 +94,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testDefaultActionInBaseSuperClass() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         MockHttpServletRequest r = new MockHttpServletRequest();
         r.servletPath = "/execute2";
