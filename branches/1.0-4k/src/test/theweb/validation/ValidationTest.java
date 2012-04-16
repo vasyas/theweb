@@ -37,6 +37,9 @@ public class ValidationTest extends TestCase {
         Validation.validate(TestPage.page);
         
         assertEquals(1, Messages.get().getErrors().size());
+    }
+    
+    public void testValidateMethodArgs() throws Exception {
         
     }
 }

@@ -2,6 +2,7 @@ package theweb;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import theweb.execution.DefaultActionMethodMatcher;
 import theweb.execution.Executor;
+import theweb.execution.MethodMatcher;
+import theweb.execution.NameMethodMatcher;
 import theweb.execution.PageInterceptor;
 
 public class Pages {
@@ -22,6 +26,14 @@ public class Pages {
     public Pages addPage(Page page) {
         this.pages.add(page);
         return this;
+    }
+    
+    private List<MethodMatcher> methodMatchers = new ArrayList<MethodMatcher>(Arrays.asList(
+    		new NameMethodMatcher(), new DefaultActionMethodMatcher()
+    ));
+    
+    public void setMethodMatchers(MethodMatcher ... methodMatchers) {
+    	this.methodMatchers = Arrays.asList(methodMatchers);
     }
     
     private List<PageInterceptor> interceptors = new ArrayList<PageInterceptor>();
@@ -58,7 +70,7 @@ public class Pages {
             
             PageState.setCurrent(new PageState(page));
         
-            Outcome outcome = new Executor(interceptors).exec(page, properties, request, response);
+            Outcome outcome = new Executor(methodMatchers, interceptors).exec(page, properties, request, response);
             
             outcome.process(page, request, response);
         } catch (Exception e) {
@@ -70,8 +82,6 @@ public class Pages {
 
     private Page getPage(HttpServletRequest request, Map<String, Object> properties) {
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
-        
-        if (path == null) path = "";
         
         for (Page page : pages) {
             Map<String, String> matches = page.getPathPattern().matches(path);

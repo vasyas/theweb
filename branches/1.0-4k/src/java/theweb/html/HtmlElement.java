@@ -25,7 +25,8 @@ public class HtmlElement implements Markup {
     public HtmlElement(String tagName, String content) {
         this.tagName = tagName;
         
-        add(new StringMarkup(content));
+        if (content != null)
+            add(new StringMarkup(content));
     }
     
     public HtmlElement(String tagName, Markup content) {
