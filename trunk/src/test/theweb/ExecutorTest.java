@@ -1,14 +1,15 @@
 package theweb;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import junit.framework.TestCase;
+import theweb.execution.DefaultActionMethodMatcher;
 import theweb.execution.Executor;
+import theweb.execution.MethodMatcher;
+import theweb.execution.NameMethodMatcher;
 import theweb.execution.PageInterceptor;
 
 public class ExecutorTest extends TestCase {
@@ -28,86 +29,26 @@ public class ExecutorTest extends TestCase {
         }
     }
     
-    private class MockHttpExchange implements HttpExchange {
-        private final String requestPath;
-
-        public MockHttpExchange(String requestPath) {
-            this.requestPath = requestPath;
-        }
-
-        @Override
-        public String getContextPath() {
-            return null;
-        }
-
-        @Override
-        public String getRequestPath() {
-            return requestPath;
-        }
-
-        @Override
-        public String getHeader(String name) {
-            return null;
-        }
-
-        @Override
-        public Map<String, Object> getParameters() {
-            return null;
-        }
-        
-        @Override
-        public InputStream getInputStream() {
-            return null;
-        }
-
-        @Override
-        public void setContentType(String contentType) {
-        }
-
-        @Override
-        public void setContentLength(long size) {
-        }
-
-        @Override
-        public PrintWriter getWriter() {
-            return null;
-        }
-
-        @Override
-        public OutputStream getOutputStream() {
-            return null;
-        }
-
-        @Override
-        public void sendError(int error) {
-        }
-
-        @Override
-        public void sendRedirect(String to) {
-        }
-
-        @Override
-        public void addHeader(String name, String value) {
-        }
-        
+    private List<MethodMatcher> defaultMatchers() {
+    	return Arrays.asList(new NameMethodMatcher(), new DefaultActionMethodMatcher());
     }
     
     public void testDefaultAction() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         executor.exec(new Page2(), new HashMap<String, Object>(), new MockHttpExchange("/"));
         assertTrue(executed);
     }
     
     public void testDefaultActionNoMatchingMethod() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         executor.exec(new Page2(), new HashMap<String, Object>(), new MockHttpExchange("/asdfasdf"));
         assertTrue(executed);
     }
     
     public void testDefaultActionExistingMethod() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         executor.exec(new Page2(), new HashMap<String, Object>(), new MockHttpExchange("/toString"));
         assertFalse(executed);
@@ -131,7 +72,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testSameMethodInBaseSuperClass() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         Page3 page = new Page3();
         executor.exec(page, new HashMap<String, Object>(), new MockHttpExchange("/execute"));
@@ -141,7 +82,7 @@ public class ExecutorTest extends TestCase {
     }
     
     public void testDefaultActionInBaseSuperClass() throws Exception {
-        Executor executor = new Executor(new ArrayList<PageInterceptor>());
+        Executor executor = new Executor(defaultMatchers(), new ArrayList<PageInterceptor>());
         
         Page3 page = new Page3();
         executor.exec(page, new HashMap<String, Object>(), new MockHttpExchange("/execute2"));

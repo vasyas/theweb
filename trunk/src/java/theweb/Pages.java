@@ -2,11 +2,15 @@ package theweb;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import theweb.execution.DefaultActionMethodMatcher;
 import theweb.execution.Executor;
+import theweb.execution.MethodMatcher;
+import theweb.execution.NameMethodMatcher;
 import theweb.execution.PageInterceptor;
 
 public class Pages {
@@ -19,6 +23,14 @@ public class Pages {
     public Pages addPage(Page page) {
         this.pages.add(page);
         return this;
+    }
+    
+    private List<MethodMatcher> methodMatchers = new ArrayList<MethodMatcher>(Arrays.asList(
+    		new NameMethodMatcher(), new DefaultActionMethodMatcher()
+    ));
+    
+    public void setMethodMatchers(MethodMatcher ... methodMatchers) {
+    	this.methodMatchers = Arrays.asList(methodMatchers);
     }
     
     private List<PageInterceptor> interceptors = new ArrayList<PageInterceptor>();
@@ -55,7 +67,7 @@ public class Pages {
             
             PageState.setCurrent(new PageState(page));
         
-            Object result = new Executor(interceptors).exec(page, properties, exchange);
+            Object result = new Executor(methodMatchers, interceptors).exec(page, properties, exchange);
             
             if (result instanceof Outcome) 
                 ((Outcome) result).process(page, exchange);
@@ -70,10 +82,10 @@ public class Pages {
         String path = exchange.getRequestPath();
         
         for (Page page : pages) {
-            Map<String, String> matches = page.getPathPattern().matches(path);
+            PathPattern.Match match = page.getPathPattern().match(path);
             
-            if (matches != null) {
-                properties.putAll(matches);
+            if (match.matched()) {
+                properties.putAll(match.getVars());
                 
                 return page;
             }

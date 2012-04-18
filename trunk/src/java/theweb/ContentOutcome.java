@@ -19,9 +19,9 @@ public class ContentOutcome implements Outcome {
     @Override
     public void process(Page page, HttpExchange exchange) throws IOException {
         exchange.setContentType(contentType);
-        exchange.addHeader("Pragma", "no-cache");
-        exchange.addHeader("Expires", "0");
-        exchange.addHeader("Etag", "" + Math.random());
+        exchange.addResponseHeader("Pragma", "no-cache");
+        exchange.addResponseHeader("Expires", "0");
+        exchange.addResponseHeader("Etag", "" + Math.random());
 
         PrintWriter writer = exchange.getWriter();
 

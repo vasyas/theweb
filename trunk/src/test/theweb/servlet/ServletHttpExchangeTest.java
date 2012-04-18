@@ -294,7 +294,6 @@ public class ServletHttpExchangeTest extends TestCase {
         public boolean isUserInRole(String arg0) {
             return false;
         }
-        
     }
     
     public void testRequestPath() throws Exception {

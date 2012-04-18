@@ -7,27 +7,42 @@ public class PathPattern {
     public final String pattern;
 
     public PathPattern(String pattern) {
+        if (!pattern.endsWith("/"))
+            throw new IllegalStateException("Page urls should ends with /");
+        
         this.pattern = pattern;
     }
     
-    public Map<String, String> matches(String path) {
+    public Match match(String path) {
         String templateTokens[] = pattern.split("/");
-        String servletTokens[] = path.split("/");
+        if (templateTokens.length == 0) templateTokens = new String[] { "" };
         
-        Map<String, String> map = new HashMap<String, String>();
+        String pathTokens[] = path.split("/");
+        
+        Map<String, String> vars = new HashMap<String, String>();
+        
+        int remainingStart = 0;
         
         for (int i = 0; i < templateTokens.length; i ++) {
             String varName = getVarName(templateTokens[i]);
             
             if (varName == null) // not variable - should be equal
-                if (servletTokens.length <= i || !servletTokens[i].equals(templateTokens[i])) 
-                    return null;
+                if (pathTokens.length <= i || !pathTokens[i].equals(templateTokens[i])) 
+                    return new Match();
             
-            if (varName != null && i < servletTokens.length)
-                map.put(varName, servletTokens[i]);
+            if (i < pathTokens.length) {
+                if (varName != null) vars.put(varName, pathTokens[i]);
+                
+                remainingStart += 1 + pathTokens[i].length();
+            }
         }
         
-        return map;
+        String remaining = null;
+        
+        if (remainingStart < path.length()) 
+            remaining = path.substring(remainingStart);
+        
+        return new Match(vars, remaining);
     }
     
     public String createPath(Map<String, String[]> properties) {
@@ -66,5 +81,33 @@ public class PathPattern {
         if (t.charAt(0) != '{' || t.charAt(t.length() - 1) != '}') return null;
         
         return t.substring(0 + 1, t.length() - 1);
+    }
+    
+    public class Match {
+        private final Map<String, String> vars;
+        public final String remaining;
+        
+        private Match(Map<String, String> vars, String remaining) {
+            this.vars = vars;
+            this.remaining = remaining;
+        }
+        
+        private Match() {
+            this(null, null);
+        }
+        
+        public boolean matched() {
+            return vars != null;
+        }
+        
+        public String get(String name) {
+            if (!matched()) throw new IllegalStateException();
+            
+            return vars.get(name);
+        }
+
+        public Map<String, String> getVars() {
+            return vars;
+        }
     }
 }

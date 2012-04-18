@@ -30,16 +30,26 @@ public class SunserverHttpExchange implements HttpExchange {
     public String getRequestPath() {
         return exchange.getRequestURI().getPath();
     }
+    
+    @Override
+    public String getRequestQuery() {
+        return exchange.getRequestURI().getQuery();
+    }
+    
+    @Override
+    public String getRequestMethod() {
+        return exchange.getRequestMethod();
+    }
 
     @Override
-    public String getHeader(String name) {
+    public String getRequestHeader(String name) {
         return exchange.getRequestHeaders().getFirst(name);
     }
     
     private Map<String, Object> parameters;
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getRequestParameters() {
         if (parameters == null) 
             parameters = SunserverUtils.readParameters(exchange);
         
@@ -70,14 +80,14 @@ public class SunserverHttpExchange implements HttpExchange {
 
     @Override
     public void setContentType(String contentType) {
-        addHeader("Content-Type", contentType);
+        addResponseHeader("Content-Type", contentType);
     }
 
     @Override
     public void setContentLength(long length) {
         this.contentLength = length;
         
-        addHeader("Content-Length", "" + length);
+        addResponseHeader("Content-Length", "" + length);
     }
 
     @Override
@@ -104,6 +114,11 @@ public class SunserverHttpExchange implements HttpExchange {
         
         if (content == null) content = "" + code;
         
+        sendError(code, content);
+    }
+    
+    @Override
+    public void sendError(int code, String content) {
         try {
             contentHeadersSent = true;
             
@@ -124,7 +139,7 @@ public class SunserverHttpExchange implements HttpExchange {
         try {
             contentHeadersSent = true;
             
-            addHeader("Location", to);
+            addResponseHeader("Location", to);
             exchange.sendResponseHeaders(302, -1);
         } catch(IOException e) {
             throw new RuntimeException(e);
@@ -132,7 +147,7 @@ public class SunserverHttpExchange implements HttpExchange {
     }
 
     @Override
-    public void addHeader(String name, String value) {
+    public void addResponseHeader(String name, String value) {
         exchange.getResponseHeaders().add(name, value);
     }
 }
