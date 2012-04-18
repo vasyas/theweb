@@ -10,9 +10,6 @@ public class AbstractPage implements Page {
     }
     
     public AbstractPage(PathPattern pathPattern) {
-        if (!pathPattern.pattern.endsWith("/"))
-            throw new IllegalStateException("Page urls should ends with /");
-        
         this.pathPattern = pathPattern;
     }
     

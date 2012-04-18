@@ -84,10 +84,10 @@ public class Pages {
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
         
         for (Page page : pages) {
-            Map<String, String> matches = page.getPathPattern().matches(path);
+            PathPattern.Match match = page.getPathPattern().match(path);
             
-            if (matches != null) {
-                properties.putAll(matches);
+            if (match.matched()) {
+                properties.putAll(match.getVars());
                 
                 return page;
             }
