@@ -29,20 +29,34 @@ public class ServletHttpExchange implements HttpExchange {
 
     @Override
     public String getRequestPath() {
-        if (request.getPathInfo() == null)
-            return request.getServletPath();
-        else
-            return request.getPathInfo();
+        String s = request.getServletPath();
+        
+        if (s == null) return request.getPathInfo();
+        
+        if (request.getPathInfo() != null)
+            s = s + request.getPathInfo();
+        
+        return s;
+    }
+    
+    @Override
+    public String getRequestQuery() {
+        return request.getQueryString();
+    }
+    
+    @Override
+    public String getRequestMethod() {
+        return request.getMethod();
     }
 
     @Override
-    public String getHeader(String name) {
+    public String getRequestHeader(String name) {
         return request.getHeader(name);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getRequestParameters() {
         return request.getParameterMap();
     }
     
@@ -91,6 +105,15 @@ public class ServletHttpExchange implements HttpExchange {
             throw new RuntimeException(e);
         }
     }
+    
+    @Override
+    public void sendError(int error, String msg) {
+        try {
+            response.sendError(error, msg);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void sendRedirect(String to) {
@@ -102,7 +125,7 @@ public class ServletHttpExchange implements HttpExchange {
     }
 
     @Override
-    public void addHeader(String name, String value) {
+    public void addResponseHeader(String name, String value) {
         response.addHeader(name, value);
     }
 

@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import theweb.Action;
-import theweb.DefaultAction;
 import theweb.HttpExchange;
 import theweb.Outcome;
 import theweb.Page;
@@ -15,46 +13,34 @@ import theweb.Param;
 import theweb.RenderOutcome;
 
 public class Executor {
+	private final List<MethodMatcher> methodMatchers;
     private final List<PageInterceptor> interceptors;
 
-    public Executor(List<PageInterceptor> interceptors) {
+    public Executor(List<MethodMatcher> methodMatchers, List<PageInterceptor> interceptors) {
+        this.methodMatchers = methodMatchers;
         this.interceptors = interceptors;
     }
     
     public Object exec(Page page, Map<String, Object> properties, HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestPath();
-        
-        String method = null;
-        
-        int idx = path.lastIndexOf('/');
-        
-        if (idx != -1 && idx != path.length() - 1)
-            method = path.substring(idx + 1);
-        
-        Execution pageExecution = getExecution(properties, page, method);
+        Execution pageExecution = getExecution(page, exchange, properties);
         
         ChainedActionExecution chainedActionInvokation = new ChainedActionExecution(interceptors, exchange, pageExecution);
 
         return chainedActionInvokation.execute();
     }
 
-    private Execution getExecution(Map<String, Object> properties, final Page page, String name) {
-        Method m = null;
-        
-        for (Method m1 : page.getClass().getMethods()) {
-            if (matchActionName(name, m1)) {
-                m = m1;
-                break;
-            }
-        }
-        
-        if (m == null)
-            for (Method m1 : page.getClass().getMethods()) {
-                if (m1.getAnnotation(DefaultAction.class) != null) {
-                    m = m1;
-                    break;
-                }
-            }
+    private Method findMethod(Page page, HttpExchange exchange, Map<String, Object> properties) {
+    	for (MethodMatcher methodMatcher : methodMatchers) {
+    		Method method = methodMatcher.getMethod(page, exchange, properties);
+    		
+    		if (method != null) return method;
+    	}
+    	
+    	return null;
+    }
+    
+    private Execution getExecution(final Page page, HttpExchange exchange, Map<String, Object> properties) {
+        Method m = findMethod(page, exchange, properties);
 
         if (m != null) {
             Object[] args = new Object[m.getParameterTypes().length];
@@ -100,17 +86,11 @@ public class Executor {
             public Page getPage() {
                 return page;
             }
-        };
-    }
 
-    private boolean matchActionName(String action, Method method) {
-        if (action == null) return false;
-        
-        if (action.equals(method.getName())) return true;
-        
-        Action annotation = method.getAnnotation(Action.class);
-        if (annotation != null && action.equals(annotation.value())) return true;
-        
-        return false;
+            @Override
+            public Object[] getArgs() {
+                return null;
+            }
+        };
     }
 }

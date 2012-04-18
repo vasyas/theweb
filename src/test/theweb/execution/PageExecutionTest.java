@@ -74,6 +74,10 @@ public class PageExecutionTest extends TestCase {
         public Page getPage() {
             return null;
         }
+        
+        public Object[] getArgs() {
+            return null;
+        }
     };
 
     private class DelegatingInterceptor implements PageInterceptor {

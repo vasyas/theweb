@@ -7,15 +7,18 @@ import junit.framework.TestCase;
 
 public class PathPatternTest extends TestCase {
     public void testCollectIdentity() throws Exception {
-        assertEquals("123", new PathPattern("/funds/{id}").matches("/funds/123/action").get("id"));
+        assertEquals("123", new PathPattern("/funds/{id}/").match("/funds/123/action").get("id"));
     }
     
     public void testCollectEmptyIdentity() throws Exception {
-        assertNull(new PathPattern("/funds/{id}").matches("/funds/").get("id"));
+        assertNull(new PathPattern("/funds/{id}/").match("/funds/").get("id"));
+        
+        assertEquals("", new PathPattern("/funds/{id}/test/").match("/funds//test").get("id"));
+        assertEquals("", new PathPattern("/funds/{id}/test/").match("/funds//test/").get("id"));
     }
     
     public void testDontMatch() throws Exception {
-        assertNull(new PathPattern("/funds2/{id}").matches("/funds/123/action"));
+        assertFalse(new PathPattern("/funds2/{id}/").match("/funds/123/action").matched());
     }
     
     public void testCreate() throws Exception {
@@ -42,7 +45,7 @@ public class PathPatternTest extends TestCase {
         
         assertFalse(properties.containsKey("a"));
         
-        assertEquals("/funds/", new PathPattern("/funds/{b}/{c}").createPath(properties));
+        assertEquals("/funds/", new PathPattern("/funds/{b}/{c}/").createPath(properties));
         assertEquals("/funds/", new PathPattern("/funds/{d}/aa/").createPath(properties));
     }
     
@@ -61,6 +64,22 @@ public class PathPatternTest extends TestCase {
     public void testMatchingBug() throws Exception {
         PathPattern pattern = new PathPattern("/report/something/");
         
-        assertNull(pattern.matches("/report/"));
+        assertFalse(pattern.match("/report/").matched());
+    }
+    
+    public void testRemaining() throws Exception {
+        assertEquals("test", new PathPattern("/report/").match("/report/test").remaining);
+        assertEquals("test/aa", new PathPattern("/report/").match("/report/test/aa").remaining);
+        
+        assertEquals("aa", new PathPattern("/report/{var}/").match("/report/test/aa").remaining);
+        assertEquals("aa/", new PathPattern("/report/{var}/").match("/report/test/aa/").remaining);
+        assertEquals("aa/", new PathPattern("/report/{var}/").match("/report//aa/").remaining);
+        assertEquals("remaining", new PathPattern("/report/{var}/test/").match("/report/var/test/remaining").remaining);
+    }
+    
+    public void testRemainingBug() throws Exception {
+        assertEquals("method", new PathPattern("/report/").match("/report/method").remaining);
+        assertEquals("method", new PathPattern("/").match("/method").remaining);
+        
     }
 }

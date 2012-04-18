@@ -7,9 +7,12 @@ import java.util.Map;
 
 public interface HttpExchange {
     String getContextPath();
+    
     String getRequestPath();
-    String getHeader(String name);
-    Map<String, Object> getParameters();
+    String getRequestQuery();
+    String getRequestMethod();
+    String getRequestHeader(String name);
+    Map<String, Object> getRequestParameters();
     InputStream getInputStream();
 
     void setContentType(String contentType);
@@ -18,7 +21,8 @@ public interface HttpExchange {
     PrintWriter getWriter();
     OutputStream getOutputStream();
 
+    void sendError(int error, String msg);
     void sendError(int error);
     void sendRedirect(String to);
-    void addHeader(String name, String value);
+    void addResponseHeader(String name, String value);
 }

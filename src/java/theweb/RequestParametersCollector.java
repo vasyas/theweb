@@ -7,7 +7,7 @@ public class RequestParametersCollector implements Collector {
     @SuppressWarnings("unchecked")
     public void collect(Map<String, Object> properties, HttpExchange exchange) {
         // trim all Strings
-        for (Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) exchange.getParameters().entrySet()) {
+        for (Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) exchange.getRequestParameters().entrySet()) {
             String name = (String) entry.getKey();
             Object value = entry.getValue();
 

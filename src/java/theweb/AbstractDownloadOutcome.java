@@ -26,17 +26,17 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         exchange.setContentType(getContentType());
 
         if (!isCacheable()) {
-            String userAgent = exchange.getHeader("User-Agent");
+            String userAgent = exchange.getRequestHeader("User-Agent");
             
             if (userAgent != null && !userAgent.contains("MSIE"))
                 //IE 6.0 SP1 fails to save files with such header
                 //http://support.microsoft.com/default.aspx?scid=kb;en-us;812935&Product=ie600
-                exchange.addHeader("Cache-Control", "no-cache"); 
+                exchange.addResponseHeader("Cache-Control", "no-cache"); 
 
-            exchange.addHeader("Pragma", "no-cache");
-            exchange.addHeader("Pragma-directive", "no-cache");
-            exchange.addHeader("Cache-Directive", "no-cache");
-            exchange.addHeader("Expires", "0");
+            exchange.addResponseHeader("Pragma", "no-cache");
+            exchange.addResponseHeader("Pragma-directive", "no-cache");
+            exchange.addResponseHeader("Cache-Directive", "no-cache");
+            exchange.addResponseHeader("Expires", "0");
             
             exchange.setContentLength(getSize());
         }
@@ -44,7 +44,7 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         String contentDisposition = isAttachment() ? "attachment" : "inline";
         if (getFileName() != null) contentDisposition += "; filename=" + getFileName();
         
-        exchange.addHeader("Content-Disposition", contentDisposition);
+        exchange.addResponseHeader("Content-Disposition", contentDisposition);
         
         
         byte[] buffer = new byte[1024];

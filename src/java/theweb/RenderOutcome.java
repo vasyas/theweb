@@ -10,9 +10,9 @@ public class RenderOutcome implements Outcome {
             Markup markup = page.markup();
             
             exchange.setContentType("text/html; charset=UTF-8");
-            exchange.addHeader("Pragma", "no-cache");
-            exchange.addHeader("Expires", "0");
-            exchange.addHeader("Etag", "" + Math.random());
+            exchange.addResponseHeader("Pragma", "no-cache");
+            exchange.addResponseHeader("Expires", "0");
+            exchange.addResponseHeader("Etag", "" + Math.random());
 
             PrintWriter writer = exchange.getWriter();
 
