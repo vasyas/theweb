@@ -15,7 +15,6 @@ public class PathPattern {
     
     public Match match(String path) {
         String templateTokens[] = pattern.split("/");
-        if (templateTokens.length == 0) templateTokens = new String[] { "" };
         
         String pathTokens[] = path.split("/");
         
@@ -39,8 +38,11 @@ public class PathPattern {
         
         String remaining = null;
         
-        if (remainingStart < path.length()) 
+        if (remainingStart < path.length()) {
+        	if (remainingStart < 1) remainingStart = 1; // at least / in path pattern
+        	
             remaining = path.substring(remainingStart);
+        }
         
         return new Match(vars, remaining);
     }
