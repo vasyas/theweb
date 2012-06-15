@@ -80,6 +80,9 @@ public class PathPatternTest extends TestCase {
     public void testRemainingBug() throws Exception {
         assertEquals("method", new PathPattern("/report/").match("/report/method").remaining);
         assertEquals("method", new PathPattern("/").match("/method").remaining);
-        
     }
+    
+    public void testSlashBug() throws Exception {
+        assertTrue(new PathPattern("/").match("/").matched());
+	}
 }
