@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetSocketAddress;
 import java.util.Map;
 
 public class MockHttpExchange implements HttpExchange {
@@ -80,6 +81,11 @@ public class MockHttpExchange implements HttpExchange {
 
     @Override
     public void addResponseHeader(String name, String value) {
+    }
+
+    @Override
+    public InetSocketAddress getRemoteAddr() {
+        return null;
     }
     
 }
