@@ -3,6 +3,7 @@ package theweb;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.util.Map;
 
 public interface HttpExchange {
@@ -14,6 +15,7 @@ public interface HttpExchange {
     String getRequestHeader(String name);
     Map<String, Object> getRequestParameters();
     InputStream getInputStream();
+    InetSocketAddress getRemoteAddr();
 
     void setContentType(String contentType);
     void setContentLength(long length);

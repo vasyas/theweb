@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +71,15 @@ public class ServletHttpExchange implements HttpExchange {
             throw new RuntimeException(e);
         }
     }
+    
+    @Override
+    public InetSocketAddress getRemoteAddr() {
+        try {
+            return new InetSocketAddress(InetAddress.getByName(request.getRemoteAddr()), request.getRemotePort());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void setContentType(String contentType) {
@@ -128,5 +140,4 @@ public class ServletHttpExchange implements HttpExchange {
     public void addResponseHeader(String name, String value) {
         response.addHeader(name, value);
     }
-
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,11 @@ public class SunserverHttpExchange implements HttpExchange {
     @Override
     public InputStream getInputStream() {
         return exchange.getRequestBody();
+    }
+    
+    @Override
+    public InetSocketAddress getRemoteAddr() {
+        return exchange.getRemoteAddress();
     }
     
     //
