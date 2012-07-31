@@ -54,6 +54,8 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         while (true) {
             int actuallyRead = source.read(buffer);
 
+            if (actuallyRead <= 0) break;
+            
             target.write(buffer, 0, actuallyRead);
             
             if (actuallyRead < buffer.length) break;
