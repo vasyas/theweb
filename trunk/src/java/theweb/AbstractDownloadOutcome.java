@@ -28,12 +28,14 @@ public abstract class AbstractDownloadOutcome implements Outcome {
         if (!isCacheable()) {
             String userAgent = exchange.getRequestHeader("User-Agent");
             
-            if (userAgent != null && !userAgent.contains("MSIE"))
-                //IE 6.0 SP1 fails to save files with such header
+            if (userAgent != null && !userAgent.contains("MSIE")) {
+                //IE fails to save files with such header
                 //http://support.microsoft.com/default.aspx?scid=kb;en-us;812935&Product=ie600
-                exchange.addResponseHeader("Cache-Control", "no-cache"); 
+                exchange.addResponseHeader("Cache-Control", "no-cache");
+                
+                exchange.addResponseHeader("Pragma", "no-cache");
+            }
 
-            exchange.addResponseHeader("Pragma", "no-cache");
             exchange.addResponseHeader("Pragma-directive", "no-cache");
             exchange.addResponseHeader("Cache-Directive", "no-cache");
             exchange.addResponseHeader("Expires", "0");
