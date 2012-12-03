@@ -83,20 +83,39 @@ public class HtmlElement implements Markup {
     }
 
     private String attributesToString() {
-        String string = "";
+        String s = "";
 
         for (String name : attributes.keySet()) {
-            if ( string.length() > 0 ) string += " ";
+            if ( s.length() > 0 ) s += " ";
 
             String value = attributes.get(name);
 
             if ( value != null )
-                string += name + "=\"" + get(name) + "\"";
+                s += name + "=\"" +  escapeAttrValue(value) + "\"";
             else
-                string += name;
+                s += name;
         }
 
-        return string;
+        return s;
+    }
+
+    private String escapeAttrValue(String s) {
+        StringBuffer sb = new StringBuffer();
+        int n = s.length();
+
+        for (int i = 0; i < n; i ++) {
+            char c = s.charAt(i);
+
+            switch (c) {
+                case '<': sb.append("&lt;"); break;
+                case '>': sb.append("&gt;"); break;
+                case '&': sb.append("&amp;"); break;
+                case '"': sb.append("&quot;"); break;
+                default:  sb.append(c); break;
+            }
+        }
+
+        return sb.toString();
     }
 
     public HtmlElement add(Markup child) {
