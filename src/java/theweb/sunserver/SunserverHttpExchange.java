@@ -29,7 +29,13 @@ public class SunserverHttpExchange implements HttpExchange {
 
     @Override
     public String getRequestPath() {
-        return exchange.getRequestURI().getPath();
+        String path = exchange.getRequestURI().getPath();
+
+        String context = exchange.getHttpContext().getPath();
+
+        path = "/" + path.substring(context.length());
+
+        return path;
     }
     
     @Override
