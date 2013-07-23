@@ -29,6 +29,22 @@ public class SunserverHttpExchangeTest extends TestCase {
         assertEquals("/servlet/path", e.getRequestPath());
     }
 
+    public void testContextPathEmpty() {
+        HttpExchange httpExchange = httpExchange("/", "/servlet/path");
+
+        SunserverHttpExchange e = new SunserverHttpExchange(httpExchange);
+
+        assertEquals("", e.getContextPath());
+    }
+
+    public void testContextPathTrailing() {
+        HttpExchange httpExchange = httpExchange("/context/", "/servlet/path");
+
+        SunserverHttpExchange e = new SunserverHttpExchange(httpExchange);
+
+        assertEquals("/context", e.getContextPath());
+    }
+
     private HttpExchange httpExchange(final String context, final String requestPath) {
         return new HttpExchange() {
                 @Override
