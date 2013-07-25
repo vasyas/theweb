@@ -62,7 +62,7 @@ public class PageState {
         Map<String, String[]> parameters = new LinkedHashMap<String, String[]>(parameterMap);
         
         for (int i = 0; i < params.length; i = i + 2)
-            addParameter(parameters, (String) params[i], params[i + 1]);
+            add(parameters, (String) params[i], params[i + 1]);
         
         return link(parameters, method);
     }
@@ -120,7 +120,7 @@ public class PageState {
         return url.toString();
     }
 
-    private void addParameter(Map<String, String[]> parameters, String name, String value) {
+    private static void add(Map<String, String[]> parameters, String name, String value) {
         if (!parameters.containsKey(name)) {
             String[] array = new String[1];
             array[0] = value;
@@ -134,7 +134,21 @@ public class PageState {
         }
     }
 
+    public void set(String name, String value) {
+        if (parameterMap.containsKey(name))
+            parameterMap.remove(name);
+
+        add(parameterMap, name, value);
+    }
+
     public PageState clean() {
         return new PageState(pathPattern);
+    }
+
+    public PageState clone() {
+        PageState pageState = new PageState(pathPattern);
+        pageState.parameterMap.putAll(parameterMap);
+
+        return pageState;
     }
 }
