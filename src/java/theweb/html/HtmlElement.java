@@ -91,7 +91,7 @@ public class HtmlElement implements Markup {
             String value = attributes.get(name);
 
             if ( value != null )
-                s += name + "=\"" +  escapeAttrValue(value) + "\"";
+                s += name + "=\"" +  value + "\"";
             else
                 s += name;
         }
