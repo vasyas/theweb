@@ -56,13 +56,6 @@ public class HtmlElementTest extends TestCase {
         assertEquals("<e a=\"1\" b c=\"3\"/>", el.render());
     }
 
-    public void testEscape() {
-        HtmlElement el = new HtmlElement("e");
-        el.set("a", "\"");
-
-        assertEquals("<e a=\"&quot;\"/>", el.render());
-    }
-
     class ElementWithContent extends HtmlElement {
         @Override
         protected String getContent() {
