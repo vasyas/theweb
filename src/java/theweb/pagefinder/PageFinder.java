@@ -1,9 +1,8 @@
 package theweb.pagefinder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import theweb.Page;
@@ -16,42 +15,61 @@ public class PageFinder {
     public interface Listener {
         void pageFound(Page page);
     }
-    
-    public static void create(String packagePrefix, final Pages pages) {
-        create(packagePrefix, new Listener() {
+
+    private List<Object> dependencies = new ArrayList<Object>();
+    private List<String> packagePrefixes = new ArrayList<String>();
+
+    public PageFinder packagePrefix(String packagePrefix) {
+        this.packagePrefixes.add(packagePrefix);
+
+        return this;
+    }
+
+    public PageFinder dep(Object dep) {
+        this.dependencies.add(dep);
+
+        return this;
+    }
+
+    public void create(final Pages pages) {
+        create(new Listener() {
             @Override
             public void pageFound(Page page) {
                 pages.add(page);
             }
         });
     }
-    
-    public static void create(String packagePrefix, Listener listener) {
+
+    public void create(Listener listener) {
         List<Page> r = new ArrayList<Page>();
-        
-        for (Class<? extends Page> pageClass : PageFinderCache.getPageClasses(packagePrefix)) {
-            Page page = createPage(pageClass);
-            
-            if (page == null) 
-                throw new RuntimeException("Can't create page type " + pageClass.getName());
-            
-            r.add(page);
-        }
-        
-        Collections.sort(r, new PageComparator());
-        
-        if (log.isDebugEnabled()) {
+
+        for (String packagePrefix : packagePrefixes) {
             log.debug("Auto creating pages in package " + packagePrefix);
-            
+
+            for (Class<? extends Page> pageClass : PageFinderCache.getPageClasses(packagePrefix)) {
+                Page page = createPage(pageClass);
+
+                if (page == null)
+                    throw new RuntimeException("Can't create page type " + pageClass.getName());
+
+
+
+                r.add(page);
+            }
+        }
+
+        Collections.sort(r, new PageComparator());
+
+        if (log.isDebugEnabled()) {
             for (Page page : r)
                 log.debug("Page " + page.getClass().getName() + ": " + page.getPathPattern().pattern);
         }
-        
+
         for (Page page : r)
             listener.pageFound(page);
     }
     
-    public static void init(String ... packagePrefixes) {
+    public void preload() {
         for (String packagePrefix : packagePrefixes)
             PageFinderCache.getPageClasses(packagePrefix);
     }
@@ -71,15 +89,50 @@ public class PageFinder {
         }
     }
 
-    private static Page createPage(Class<? extends Page> pageClass) {
+    private Page createPage(Class<? extends Page> pageClass) {
+        Page page = null;
+
         try {
-            Page page = pageClass.newInstance();
-            
-            return page;
-        } catch (InstantiationException e) {
-            return null;
-        } catch (IllegalAccessException e) {
+            List<Constructor<?>> cc = Arrays.asList(pageClass.getConstructors());
+
+//            Collections.sort(cc, new Comparator<Constructor<?>>() {
+//                @Override
+//                public int compare(Constructor<?> o1, Constructor<?> o2) {
+//                    return o1.;
+//                }
+//            });
+
+            for (Constructor c : cc) {
+                Object[] args = getConstructorArgs(c);
+
+                if (args == null) continue;
+
+                page = (Page) c.newInstance(args);
+                break;
+            }
+        } catch (InstantiationException ignored) {
+        } catch (IllegalAccessException ignored) {
+        } catch (InvocationTargetException ignored) {
+        }
+
+        return page;
+    }
+
+    private Object[] getConstructorArgs(Constructor c) {
+        Object[] r = new Object[c.getParameterTypes().length];
+
+        outer:
+        for (int i = 0; i < r.length; i ++) {
+            for (Object dep : dependencies) {
+                if (c.getParameterTypes()[i].isAssignableFrom(dep.getClass())) {
+                    r[i] = dep;
+                    continue outer;
+                }
+            }
+
             return null;
         }
+
+        return r;
     }
 }

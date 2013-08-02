@@ -8,6 +8,8 @@ import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.TestCase;
 import theweb.Page;
+import theweb.pagefinder.pages.dependencies.Dep;
+import theweb.pagefinder.pages.dependencies.DepPage;
 import theweb.pagefinder.pages.onepage.PlainPage;
 import theweb.pagefinder.pages.orderstatic.FirstPage;
 import theweb.pagefinder.pages.orderstatic.SecondPage;
@@ -43,17 +45,31 @@ public class PageFinderTest extends TestCase {
         
         assertPages(new FirstPage(), new SecondPage(), new ThirdPage());
     }
-    
+
+    public void testDependencies() {
+        new PageFinder()
+                .packagePrefix("theweb.pagefinder.pages.dependencies")
+                .dep(new Dep())
+                .create(new PageFinder.Listener() {
+                    @Override
+                    public void pageFound(Page page) {
+                        pages.add(page);
+                    }
+                });
+
+        assertPages(new DepPage(new Dep()));
+    }
+
     private void assertPages(Page ... pp) {
         assertEquals(Arrays.asList(pp), pages);
     }
     
     private void test(String pkg) {
-        PageFinder.create(pkg, new PageFinder.Listener() {
+        new PageFinder().packagePrefix(pkg).create(new PageFinder.Listener() {
             @Override
             public void pageFound(Page page) {
                 pages.add(page);
-            } 
+            }
         });
     }
 }
