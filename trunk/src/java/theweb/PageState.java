@@ -27,7 +27,7 @@ public class PageState {
         parameterMap = new HashMap<String, String[]>();
     }
     
-    public static PageState getCurrent() {
+    public static PageState get() {
         return tl.get();
     }
 
@@ -134,11 +134,13 @@ public class PageState {
         }
     }
 
-    public void set(String name, String value) {
+    public PageState set(String name, String value) {
         if (parameterMap.containsKey(name))
             parameterMap.remove(name);
 
         add(parameterMap, name, value);
+
+        return this;
     }
 
     public PageState clean() {

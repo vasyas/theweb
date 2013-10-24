@@ -34,7 +34,7 @@ public class Messages {
 	}
 	 
 	public static void error(String s) {
-		messages.get().errors.add(s);
+		messages.get().errors.add(Resources.getText(s));
 	}
 	
 	public static void error(String s, Object ... args) {
