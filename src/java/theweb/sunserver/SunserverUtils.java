@@ -65,7 +65,7 @@ class SunserverUtils {
                     value = new String[] { (String) old, (String) value };
                 } else { 
                     old = Arrays.copyOf((String[]) old, Array.getLength(old) + 1);
-                    Array.set(old, Array.getLength(old) + 1, value);
+                    Array.set(old, Array.getLength(old) - 1, value);
                     
                     value = old;
                 } 
