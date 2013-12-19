@@ -29,15 +29,17 @@ class Describer {
     
     private void describe(Object page, String prefix) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         describeDeclaredFields(page, prefix);
-        describeCustom(page);
+        describeCustom(page.getClass(), page);
     }
 
-    private void describeCustom(Object object) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        for (Method m : object.getClass().getMethods())
+    private void describeCustom(Class<?> type, Object object) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        if (type.getSuperclass() != null) describeCustom(type.getSuperclass(), object);
+
+        for (Method m : type.getDeclaredMethods())
             if (m.getAnnotation(CustomDescription.class) != null)
                 m.invoke(object, parameterMap);
     }
-    
+
     private void describeDeclaredFields(Object object, String prefix) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         for (Field field : object.getClass().getFields()) {
             if (!field.isAccessible()) field.setAccessible(true);
@@ -52,7 +54,12 @@ class Describer {
                 describe(value, prefix + field.getName() + ".");
                 continue;
             }
-            
+
+            if (value instanceof Map) {
+                describeMap(prefix + field.getName(), (Map<String, Object>) value);
+                continue;
+            }
+
             String[] result = null;
             
             if (field.getType().isArray()) {
@@ -73,6 +80,17 @@ class Describer {
             
             if (result != null)
                 parameterMap.put(prefix + field.getName(), result);
+        }
+    }
+
+    public void describeMap(String mapName, Map<String, Object> map) {
+        for (String key : map.keySet()) {
+            Object value = map.get(key);
+
+            String convertedValue = (String) new TypeConvertor().convertValue(value, String.class);
+
+            if (convertedValue != null && !convertedValue.isEmpty())
+                parameterMap.put(mapName + "[" + key + "]", new String[] { convertedValue });
         }
     }
 }
