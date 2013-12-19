@@ -24,7 +24,7 @@ public class PageState {
     
     private PageState(PathPattern pathPattern) {
         this.pathPattern = pathPattern;
-        parameterMap = new HashMap<String, String[]>();
+        parameterMap = new LinkedHashMap<String, String[]>();
     }
     
     public static PageState get() {

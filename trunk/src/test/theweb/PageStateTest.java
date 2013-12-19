@@ -1,6 +1,8 @@
 package theweb;
 
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -150,5 +152,16 @@ public class PageStateTest extends TestCase {
         MockOuterPage page = new MockOuterPage();
         
         assertEquals("/context/base/test", new PageState(page).action("test"));
+    }
+
+    public AbstractPage pageWithMap = new MockPageNone() {
+        public Map<String, String> values = new LinkedHashMap<String, String>(); {
+            values.put("k1", "v1");
+            values.put("k2", "v2");
+        };
+    };
+
+    public void testDescribeMap() throws Exception {
+        assertEquals("/context/base/?page.values[k1]=v1&page.values[k2]=v2", new PageState(pageWithMap).view());
     }
 }
