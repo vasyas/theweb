@@ -71,6 +71,8 @@ public class Pages {
             
             if (result instanceof Outcome) 
                 ((Outcome) result).process(page, exchange);
+            else
+                exchange.getOutputStream().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
