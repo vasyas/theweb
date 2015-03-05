@@ -1,22 +1,20 @@
 package theweb.velocity;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class FieldAwareUberspectTest extends TestCase {
-    @SuppressWarnings("unused")
+public class FieldAwareUberspectTest  {
+    @Test
     public void testMethodInANonVisibleClass() throws Exception {
-        VelocityTemplate t = new VelocityTemplate(FieldAwareUberspectTest.class, "method.vm");
+        Template t = new Template(FieldAwareUberspectTest.class, "method.vm");
         
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put("object", new Object() { 
+        t.context("object", new Object() {
             public String method() {
                 return "AAA";
             }
         });
-        
-        assertEquals("AAA", t.render(context));
+
+        assertEquals("AAA", t.render());
     }
 }

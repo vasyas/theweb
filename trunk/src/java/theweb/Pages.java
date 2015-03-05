@@ -1,56 +1,50 @@
 package theweb;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import theweb.execution.DefaultActionMethodMatcher;
-import theweb.execution.Executor;
-import theweb.execution.MethodMatcher;
-import theweb.execution.NameMethodMatcher;
-import theweb.execution.PageInterceptor;
+import java.util.stream.Stream;
 
 public class Pages {
+    private final static Logger log = Logger.getLogger(Pages.class);
+
     private List<Page> pages = new ArrayList<Page>();
     
-    public Pages add(Page page) {
-        return addPage(page);
+    public Pages(Page... pages) {
+        Stream.of(pages).forEach(this::add);
     }
-    
-    public Pages addPage(Page page) {
-        this.pages.add(page);
+
+    public Pages add(Page page) {
+        pages.add(page);
         return this;
     }
-    
+
     private List<MethodMatcher> methodMatchers = new ArrayList<MethodMatcher>(Arrays.asList(
-    		new NameMethodMatcher(), new DefaultActionMethodMatcher()
+            new NameMethodMatcher(), new ViewMethodMatcher()
     ));
-    
-    public void setMethodMatchers(MethodMatcher ... methodMatchers) {
-    	this.methodMatchers = Arrays.asList(methodMatchers);
-    }
-    
+
     private List<PageInterceptor> interceptors = new ArrayList<PageInterceptor>();
-    
-    public void addInterceptor(PageInterceptor interceptor) {
-        interceptors.add(interceptor);
+
+    public Pages interceptors(PageInterceptor... interceptors) {
+        Stream.of(interceptors).forEach(this.interceptors::add);
+        return this;
     }
-    
+
     private List<Collector> collectors = new ArrayList<Collector>();
-    
-    public void addCollector(Collector collector) {
-        collectors.add(collector);
+
+    public Pages collectors(Collector ... collectors) {
+        Stream.of(collectors).forEach(this.collectors::add);
+        return this;
     }
-    
-    public Populator populator = new ReflectionPopulator(true);
 
     public void invoke(HttpExchange exchange) throws IOException {
-        new ContextInfo(exchange.getContextPath());
-        
-        Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        Map<String, Object> properties = new LinkedHashMap<>();
         
         Page page = getPage(exchange, properties);
         
@@ -62,17 +56,17 @@ public class Pages {
         try {
             for (Collector collector : collectors)
                 collector.collect(properties, exchange);
-            
-            populator.populate(page, properties);
+
+            new Populator().populate(page, properties);
             
             PageState.setCurrent(new PageState(page));
         
-            Object result = new Executor(methodMatchers, interceptors).exec(page, properties, exchange);
-            
-            if (result instanceof Outcome) 
-                ((Outcome) result).process(page, exchange);
-            else
-                exchange.getOutputStream().flush();
+            Object result = exec(page, properties, exchange);
+
+            if (result != null)
+                log.warn("Unhandled " + result + " from " + page);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -80,11 +74,23 @@ public class Pages {
         }
     }
 
+    Object exec(Page page, Map<String, Object> properties, HttpExchange exchange) throws Exception {
+        Method method = getMethod(page, exchange, properties);
+
+        if (method == null) return Response.NotFound;
+
+        MethodExecution methodExecution = new MethodExecution(page, method, properties);
+
+        InterceptedExecution interceptedExecution = new InterceptedExecution(interceptors, exchange, methodExecution);
+
+        return interceptedExecution.execute();
+    }
+
     private Page getPage(HttpExchange exchange, Map<String, Object> properties) {
         String path = exchange.getRequestPath();
         
         for (Page page : pages) {
-            PathPattern.Match match = page.getPathPattern().match(path);
+            PathPattern.Match match = new PathPattern(page.path).match(path);
             
             if (match.matched()) {
                 properties.putAll(match.getVars());
@@ -93,6 +99,16 @@ public class Pages {
             }
         }
         
+        return null;
+    }
+
+    private Method getMethod(Page page, HttpExchange exchange, Map<String, Object> properties) {
+        for (MethodMatcher methodMatcher : methodMatchers) {
+            Method method = methodMatcher.getMethod(page, exchange, properties);
+
+            if (method != null) return method;
+        }
+
         return null;
     }
 }

@@ -2,7 +2,6 @@ package theweb;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,14 +16,10 @@ public class PageState {
     private final PathPattern pathPattern;
 
     public PageState(Page page) {
-        this(page.getPathPattern());
+        this.pathPattern = new PathPattern(page.path);
+        parameterMap = new LinkedHashMap<>();
         
         new Describer(parameterMap).describe(page);
-    }
-    
-    private PageState(PathPattern pathPattern) {
-        this.pathPattern = pathPattern;
-        parameterMap = new LinkedHashMap<String, String[]>();
     }
     
     public static PageState get() {
@@ -45,20 +40,8 @@ public class PageState {
         return action("");
     }
     
-    /** Convenient method for velocity */
-    public String action(String method) {
-        return action(method, new String[] { });
-    }
-    
-    /** Convenient method for velocity */
-    public String action(String method, String param1, String param2) {
-        if (param1 == null || param2 == null) return action(method);
-        
-        return action(method, new String[] { param1, param2 });
-    }
-    
     /** Add page state to action paramters. Will return local link */
-    public String action(String method, String ... params) {
+    public String action(String method, String... params) {
         Map<String, String[]> parameters = new LinkedHashMap<String, String[]>(parameterMap);
         
         for (int i = 0; i < params.length; i = i + 2)
@@ -67,52 +50,28 @@ public class PageState {
         return link(parameters, method);
     }
 
-    /** Return page state as form inputs */
-    public String form() {
-        StringBuilder url = new StringBuilder();
-        
-        for (String key : parameterMap.keySet()) {
-            String[] array = parameterMap.get(key);
-            
-            for (int i = 0; i < array.length; i ++) {
-                String value = array[i];
-                
-                url.append("<input type=\"hidden\" name=\"");
-                url.append(key);
-                url.append("\" value=\"");
-                url.append(value.toString());
-                url.append("\">");
-            }
-        }
-        
-        return url.toString();
-    }
-    
     private String link(Map<String, String[]> parameters, String method) {
         StringBuilder url = new StringBuilder();
         
-        url.append(ContextInfo.getCurrent().contextPath);
         url.append(pathPattern.createPath(parameters));
         
         url.append(method);
         
         for (String key : parameters.keySet()) {
             String[] array = parameters.get(key);
-            
-            for (int i = 0; i < array.length; i ++) {
-                String value = array[i];
-                
+
+            for (String value : array) {
                 if (url.indexOf("?") != -1)
                     url.append("&");
                 else
                     url.append("?");
-                
+
                 url.append(key);
                 url.append("=");
-                
+
                 try {
-                    url.append(URLEncoder.encode(value.toString(), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
+                    url.append(URLEncoder.encode(value, "UTF-8"));
+                } catch (UnsupportedEncodingException ignored) {
                 }
             }
         }
@@ -134,23 +93,11 @@ public class PageState {
         }
     }
 
-    public PageState set(String name, String value) {
-        if (parameterMap.containsKey(name))
-            parameterMap.remove(name);
-
-        add(parameterMap, name, value);
-
-        return this;
+    public static String view(Page page) {
+        return new PageState(page).view();
     }
 
-    public PageState clean() {
-        return new PageState(pathPattern);
-    }
-
-    public PageState clone() {
-        PageState pageState = new PageState(pathPattern);
-        pageState.parameterMap.putAll(parameterMap);
-
-        return pageState;
+    public static String action(Page page, String method, String... params) {
+        return new PageState(page).action(method, params);
     }
 }

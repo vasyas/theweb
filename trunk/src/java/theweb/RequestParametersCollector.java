@@ -11,7 +11,7 @@ public class RequestParametersCollector implements Collector {
             String name = (String) entry.getKey();
             Object value = entry.getValue();
 
-            if ( value instanceof String )
+            if ( value instanceof String)
                 properties.put(name, ((String)value).trim());
             else if ( value instanceof String[]) {
                 String[] strings = (String[]) entry.getValue();

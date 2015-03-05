@@ -1,9 +1,9 @@
 package theweb;
 
+import junit.framework.TestCase;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 public class PathPatternTest extends TestCase {
     public void testCollectIdentity() throws Exception {
@@ -79,10 +79,15 @@ public class PathPatternTest extends TestCase {
     
     public void testRemainingBug() throws Exception {
         assertEquals("method", new PathPattern("/report/").match("/report/method").remaining);
-        assertEquals("method", new PathPattern("/").match("/method").remaining);
     }
     
-    public void testSlashBug() throws Exception {
+    public void testSlashSpecial() throws Exception {
         assertTrue(new PathPattern("/").match("/").matched());
+        assertFalse(new PathPattern("/").match("/report.html").matched());
 	}
+
+    public void testPrefix() throws Exception {
+        assertTrue(new PathPattern("/a/").match("/a/b").matched());
+        assertFalse(new PathPattern("/a").match("/a/b").matched());
+    }
 }

@@ -1,5 +1,7 @@
 package theweb.i18n;
 
+import theweb.resources.ResourceLocation;
+
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +10,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import theweb.resources.ResourceLocation;
-
 public class Resources {
-	public static void addBundle(ResourceLocation location) {  
+	public static void addBundle(ResourceLocation location) {
         int begin = location.getName().lastIndexOf('_');
         
         if (begin == -1)
@@ -57,7 +57,7 @@ public class Resources {
 	    return getText(key);
 	}
 	
-	public static String i18n(String key, Object ... args) {
+	public static String i18n(String key, Object... args) {
 	    return getText(key, args);
 	}
 	
@@ -65,7 +65,7 @@ public class Resources {
 	    return getText(key);
 	}
 	
-	public static String i(String key, Object ... args) {
+	public static String i(String key, Object... args) {
 	    return getText(key, args);
 	}
 	

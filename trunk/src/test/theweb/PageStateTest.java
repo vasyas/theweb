@@ -1,20 +1,19 @@
 package theweb;
 
+import junit.framework.TestCase;
+
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 public class PageStateTest extends TestCase {
-    public static class MockPageNone extends AbstractPage { 
+    public static class MockPageNone extends Page {
         public MockPageNone() {
             super("/base/");
         }
     }
     
-    public static class MockPageStringFields extends AbstractPage { 
+    public static class MockPageStringFields extends Page {
         public MockPageStringFields() {
             super("/base/");
         }
@@ -24,7 +23,7 @@ public class PageStateTest extends TestCase {
         public String field3 = "value";
     }
     
-    public static class MockPagePattern extends AbstractPage { 
+    public static class MockPagePattern extends Page {
         public MockPagePattern() {
             super("/base/{page.field1}/");
         }
@@ -33,7 +32,7 @@ public class PageStateTest extends TestCase {
         public String field2 = "2";
     }
     
-    public static class MockPageTypes extends AbstractPage {
+    public static class MockPageTypes extends Page {
         public MockPageTypes() {
             super("/base/");
         }
@@ -41,7 +40,7 @@ public class PageStateTest extends TestCase {
         public boolean field1;
     }
     
-    public static class MockPageTransient extends AbstractPage {
+    public static class MockPageTransient extends Page {
         public MockPageTransient() {
             super("/base/");
         }
@@ -52,32 +51,27 @@ public class PageStateTest extends TestCase {
         public static String f = "b";
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        new ContextInfo("/context");
-    }
-    
     public void testObjectPageState() throws Exception {
-        assertEquals("/context/base/", new PageState(new MockPageNone()).view());
-        assertEquals("/context/base/test", new PageState(new MockPageNone()).action("test"));
+        assertEquals("/base/", new PageState(new MockPageNone()).view());
+        assertEquals("/base/test", new PageState(new MockPageNone()).action("test"));
         
-        assertEquals("/context/base/test?page.field3=value", new PageState(new MockPageStringFields()).action("test"));
+        assertEquals("/base/test?page.field3=value", new PageState(new MockPageStringFields()).action("test"));
     }
     
     public void testPathPattern() throws Exception {
-        assertEquals("/context/base/1/?page.field2=2", new PageState(new MockPagePattern()).view());
+        assertEquals("/base/1/?page.field2=2", new PageState(new MockPagePattern()).view());
     }
     
     public void testTypeConversion() throws Exception {
-        assertEquals("/context/base/?page.field1=false", new PageState(new MockPageTypes()).view());
+        assertEquals("/base/?page.field1=false", new PageState(new MockPageTypes()).view());
     }
     
     public void testTransientProperties() throws Exception {
-        assertEquals("/context/base/?page.a=b", new PageState(new MockPageTransient()).view());
+        assertEquals("/base/?page.a=b", new PageState(new MockPageTransient()).view());
     }
 
     @SuppressWarnings("unused")
-    AbstractPage p1 = new MockPageNone() {
+    Page p1 = new MockPageNone() {
         public String a = "b";
     };
     
@@ -87,8 +81,8 @@ public class PageStateTest extends TestCase {
     }
     
     public void testAccessible() throws Exception {
-        assertEquals("/context/base/?page.a=b", new PageState(p1).view());
-        assertEquals("/context/base/?page.a=b", new PageState(new InaccessiblePage()).view());
+        assertEquals("/base/?page.a=b", new PageState(p1).view());
+        assertEquals("/base/?page.a=b", new PageState(new InaccessiblePage()).view());
     }
     
     public static class BaseCustomDescriptionPage extends MockPageNone {
@@ -106,10 +100,10 @@ public class PageStateTest extends TestCase {
     }
     
     public void testCustomDescription() throws Exception {
-        assertEquals("/context/base/?base=a&derived=b", new PageState(new CustomDescriptionPage()).view());
+        assertEquals("/base/?base=a&derived=b", new PageState(new CustomDescriptionPage()).view());
     }
     
-    static class EnumStatePage extends AbstractPage {
+    static class EnumStatePage extends Page {
 
         public EnumStatePage() {
             super("/");
@@ -118,28 +112,28 @@ public class PageStateTest extends TestCase {
         public Item item = Item.apple;
         
         public String getLink(){
-            return new PageState(this).action("somelink"); 
+            return new PageState(this).action("somelink");
         }
        
         enum Item { apple, orange, lemon }
     }
     
     public void testEnum() throws Exception {
-        assertEquals("/context/?page.item=apple", new PageState(new EnumStatePage()).view());
+        assertEquals("/?page.item=apple", new PageState(new EnumStatePage()).view());
     }
     
     public void testEncoding() throws Exception {
         MockPageStringFields page = new MockPageStringFields();
         page.field2 = "&";
         
-        assertEquals("/context/base/test?page.field2=" + URLEncoder.encode("&", "UTF-8")+ "&page.field3=value", new PageState(page).action("test"));
+        assertEquals("/base/test?page.field2=" + URLEncoder.encode("&", "UTF-8")+ "&page.field3=value", new PageState(page).action("test"));
     }
 
     static class Inner {
         public String a = "b";
     }
     
-    static class MockOuterPage extends AbstractPage {
+    static class MockOuterPage extends Page {
         public MockOuterPage() {
             super("/base/");
         }
@@ -151,10 +145,10 @@ public class PageStateTest extends TestCase {
     public void testDescribeNull() throws Exception {
         MockOuterPage page = new MockOuterPage();
         
-        assertEquals("/context/base/test", new PageState(page).action("test"));
+        assertEquals("/base/test", new PageState(page).action("test"));
     }
 
-    public AbstractPage pageWithMap = new MockPageNone() {
+    public Page pageWithMap = new MockPageNone() {
         public Map<String, String> values = new LinkedHashMap<String, String>(); {
             values.put("k1", "v1");
             values.put("k2", "v2");
@@ -162,6 +156,6 @@ public class PageStateTest extends TestCase {
     };
 
     public void testDescribeMap() throws Exception {
-        assertEquals("/context/base/?page.values[k1]=v1&page.values[k2]=v2", new PageState(pageWithMap).view());
+        assertEquals("/base/?page.values[k1]=v1&page.values[k2]=v2", new PageState(pageWithMap).view());
     }
 }

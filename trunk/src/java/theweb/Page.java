@@ -1,6 +1,7 @@
 package theweb;
 
-public interface Page {
-    Markup markup() throws Exception;
-    PathPattern getPathPattern();
+public class Page {
+    public final String path;
+
+    public Page(String path) { this.path = path; }
 }

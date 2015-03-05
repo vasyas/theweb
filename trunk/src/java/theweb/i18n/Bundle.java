@@ -1,13 +1,13 @@
 package theweb.i18n;
 
+import theweb.resources.ResourceLocation;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-
-import theweb.resources.ResourceLocation;
 
 class Bundle {
     private final ResourceLocation location;

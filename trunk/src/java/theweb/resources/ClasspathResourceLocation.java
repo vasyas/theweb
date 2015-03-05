@@ -13,10 +13,8 @@ public class ClasspathResourceLocation implements ResourceLocation {
 
 	public InputStream getInputStream() {
 	    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	    
-	    InputStream resourceStream = loader.getResourceAsStream(name);
-	    
-	    return resourceStream;
+
+        return loader.getResourceAsStream(name);
 	}
 
 	public String getName() {
