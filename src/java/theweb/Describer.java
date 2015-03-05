@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
-import theweb.execution.TypeConvertor;
-
 class Describer {
     private final Map<String, String[]> parameterMap;
 
@@ -18,9 +16,7 @@ class Describer {
     public void describe(Page page) {
         try {
             describe(page, "page.");
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
@@ -40,6 +36,7 @@ class Describer {
                 m.invoke(object, parameterMap);
     }
 
+    @SuppressWarnings("unchecked")
     private void describeDeclaredFields(Object object, String prefix) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         for (Field field : object.getClass().getFields()) {
             if (!field.isAccessible()) field.setAccessible(true);

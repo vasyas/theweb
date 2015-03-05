@@ -1,14 +1,14 @@
 package theweb.i18n;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import org.apache.velocity.context.InternalContextAdapter;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+
+import java.io.IOException;
+import java.io.Writer;
 
 public class IDirective extends Directive {
 
@@ -25,7 +25,7 @@ public class IDirective extends Directive {
     @Override
     public boolean render(InternalContextAdapter context, Writer writer, Node node) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
         if (node.jjtGetNumChildren() < 1) {
-            rsvc.error("#i() error : invalid argument count");
+            rsvc.getLog().error("#i() error : invalid argument count");
             
             return true;
         }
@@ -33,7 +33,7 @@ public class IDirective extends Directive {
         Object key = node.jjtGetChild(0).value(context);
         
         if (key == null) {
-            rsvc.error("#i18n() error : null passed as key");
+            rsvc.getLog().error("#i18n() error : null passed as key");
             
             return true;
         }

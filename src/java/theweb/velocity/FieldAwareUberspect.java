@@ -1,12 +1,12 @@
 package theweb.velocity;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import org.apache.velocity.util.introspection.Info;
 import org.apache.velocity.util.introspection.UberspectImpl;
 import org.apache.velocity.util.introspection.VelMethod;
 import org.apache.velocity.util.introspection.VelPropertyGet;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class FieldAwareUberspect extends UberspectImpl {
     public VelPropertyGet getPropertyGet(Object obj, String identifier, Info info) throws Exception {
