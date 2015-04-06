@@ -1,7 +1,6 @@
 package theweb.sessions;
 
 import com.sun.net.httpserver.HttpExchange;
-import theweb.goodies.Cookies;
 
 import java.io.IOException;
 
@@ -19,7 +18,7 @@ public class SessionFilter extends com.sun.net.httpserver.Filter {
 
     @Override
     public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
-        Cookies cookies = new Cookies(exchange);
+        SunServerCookies cookies = new SunServerCookies(exchange);
 
         String id = cookies.get("sessionid");
         

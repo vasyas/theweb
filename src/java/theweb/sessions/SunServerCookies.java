@@ -1,19 +1,19 @@
-package theweb.goodies;
+package theweb.sessions;
 
-import theweb.HttpExchange;
+import com.sun.net.httpserver.HttpExchange;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Cookies {
+class SunServerCookies {
     private final HttpExchange exchange;
 
-    public Cookies(HttpExchange exchange) {
+    public SunServerCookies(HttpExchange exchange) {
         this.exchange = exchange;
     }
 
     public String get(String name) {
-        String cookie = exchange.getRequestHeader("Cookie");
+        String cookie = exchange.getRequestHeaders().getFirst("Cookie");
 
         if (cookie == null) return null;
 
@@ -28,10 +28,10 @@ public class Cookies {
     private final String expires_past = "Tue, 15 Jan 2013 21:47:38 GMT";
 
     public void add(String name, String value) {
-        exchange.addResponseHeader("Set-Cookie", name + "=" + value + "; path=/; expires=" + expires_future);
+        exchange.getResponseHeaders().add("Set-Cookie", name + "=" + value + "; path=/; expires=" + expires_future);
     }
 
     public void remove(String name) {
-        exchange.addResponseHeader("Set-Cookie", name + "=empty; path=/; expires=" + expires_past);
+        exchange.getResponseHeaders().add("Set-Cookie", name + "=empty; path=/; expires=" + expires_past);
     }
 }
