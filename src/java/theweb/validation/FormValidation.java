@@ -126,4 +126,10 @@ public class FormValidation {
 
         rootContext.addGlobalMessage(message);
     }
+
+    public void add(String field, String message) {
+        if (rootContext == null) rootContext = new ValidationContext();
+
+        rootContext.addMessage(field, message);
+    }
 }

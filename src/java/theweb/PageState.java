@@ -93,11 +93,11 @@ public class PageState {
         }
     }
 
-    public static String view(Page page) {
+    public static String page(Page page) {
         return new PageState(page).view();
     }
 
-    public static String action(Page page, String method, String... params) {
+    public static String page(Page page, String method, String... params) {
         return new PageState(page).action(method, params);
     }
 }
