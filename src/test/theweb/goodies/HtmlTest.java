@@ -15,6 +15,7 @@ public class HtmlTest {
     @Test
     public void attrs() {
         asrt("<a href=\"#\"/>", a().href("#"));
+        asrt("<a q/>", a().attr("q"));
     }
 
     @Test
