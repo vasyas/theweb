@@ -21,6 +21,11 @@ class SunserverUtils {
         
         try {
             parameters.putAll(parseQuery(exchange.getRequestURI().getRawQuery()));
+
+            String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+            if (contentType == null) return parameters;
+            if (!contentType.startsWith("application/x-www-form-urlencoded") &&
+                    !contentType.startsWith("multipart/form-data")) return parameters;
             
             if ("POST".equals(exchange.getRequestMethod())) {
                 InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
