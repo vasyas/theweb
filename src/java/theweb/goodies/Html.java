@@ -27,11 +27,17 @@ public class Html {
     public Html target(String s) { return attr("target", s); }
     public Html clazz(String s) { return attr("class", s); }
 
+    public Html disabled() { return attr("disabled"); }
+
     public Html data(String ... params) {
         for (int i = 0; i < params.length; i += 2)
             attr("data-" + params[i], params[i + 1]);
 
         return this;
+    }
+
+    public Html attr(String name) {
+        return attr(name, null);
     }
 
     public Html attr(String name, String value) {
@@ -61,9 +67,12 @@ public class Html {
 
             s.append(" ");
             s.append(attrName);
-            s.append("=\"");
-            s.append(escape(attrValue));
-            s.append("\"");
+
+            if (attrValue != null) {
+                s.append("=\"");
+                s.append(escape(attrValue));
+                s.append("\"");
+            }
         }
 
         if (children.isEmpty() && collapsing())
