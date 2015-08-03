@@ -69,21 +69,21 @@ public class ServeStaticResourcesFilter extends com.sun.net.httpserver.Filter {
         inputStream = resourceLoc.getInputStream();
 
         // check for etag
-//        String etag = exchange.getRequestHeaders().getFirst("If-None-Match");
-//
-//        if (etag != null && etag.equals("" + resourceLoc.lastModified())) {
-//            exchange.getResponseHeaders().add("Cache-Control", "max-age=120");
-//            exchange.getResponseHeaders().add("ETag", "" + resourceLoc.lastModified());
-//            exchange.sendResponseHeaders(304, -1);
-//            exchange.close();
-//            return;
-//        }
+        String etag = exchange.getRequestHeaders().getFirst("If-None-Match");
+
+        if (etag != null && etag.equals("" + resourceLoc.lastModified())) {
+            exchange.getResponseHeaders().add("Cache-Control", "max-age=120");
+            exchange.getResponseHeaders().add("ETag", "" + resourceLoc.lastModified());
+            exchange.sendResponseHeaders(304, -1);
+            exchange.close();
+            return;
+        }
 
         // send response
         try {
             exchange.getResponseHeaders().add("Content-Type", contentType);
-//            exchange.getResponseHeaders().add("Cache-Control", "max-age=120");
-//            exchange.getResponseHeaders().add("ETag", "" + resourceLoc.lastModified());
+            exchange.getResponseHeaders().add("Cache-Control", "max-age=120");
+            exchange.getResponseHeaders().add("ETag", "" + resourceLoc.lastModified());
             exchange.getResponseHeaders().add("Cache-Control", "no-cache");
 
 
