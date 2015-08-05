@@ -125,7 +125,8 @@ public class PageExecutionTest extends TestCase {
     }
     
     public void testInaccessibleMethod() throws Exception {
-        MethodExecution execution = new MethodExecution(TestPage.page, TestPage.page.getClass().getDeclaredMethod("action1"), new HashMap<>());
+        MethodExecution execution = new MethodExecution(TestPage.page,
+                TestPage.page.getClass().getDeclaredMethod("action1"), new HashMap<>());
 
         execution.execute();
         

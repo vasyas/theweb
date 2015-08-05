@@ -61,7 +61,7 @@ public class SunserverUtilsTest extends TestCase {
             
             @Override
             public Headers getRequestHeaders() {
-                return null;
+                return new Headers();
             }
             
             @Override
