@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class MockHttpExchange implements HttpExchange {
     private final String requestPath;
+    public int error;
+    public String msg;
 
     public MockHttpExchange(String requestPath) {
         this.requestPath = requestPath;
@@ -69,10 +71,13 @@ public class MockHttpExchange implements HttpExchange {
 
     @Override
     public void sendError(int error) {
+        this.error = error;
     }
     
     @Override
     public void sendError(int error, String msg) {
+        this.error = error;
+        this.msg = msg;
     }
 
     @Override

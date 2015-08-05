@@ -138,4 +138,13 @@ public class PageExecutionTest extends TestCase {
         } catch(RuntimeException e) {
         }
     }
+
+    public void testMethodNotFound() throws Exception {
+        Pages pages = new Pages(TestPage.page);
+
+        MockHttpExchange exchange = new MockHttpExchange("/no-such-method");
+        pages.invoke(exchange);
+
+        assertEquals(404, exchange.error);
+    }
 }
