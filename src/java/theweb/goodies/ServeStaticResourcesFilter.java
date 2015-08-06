@@ -17,7 +17,7 @@ public class ServeStaticResourcesFilter extends com.sun.net.httpserver.Filter {
         return "ServeStaticResourcesFilters";
     }
 
-    private String getContentType(String path) {
+    protected String getContentType(String path) {
         Map<String, String> types = new HashMap<>();
         
         types.put(".css", "text/css");
