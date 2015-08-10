@@ -18,7 +18,7 @@ public class MoreExecutionTest {
             super("/page/");
         }
 
-        @View
+        @Default
         public Response execute() {
             executed = true;
             
@@ -30,7 +30,7 @@ public class MoreExecutionTest {
     }
     
     private List<MethodMatcher> defaultMatchers() {
-    	return Arrays.asList(new NameMethodMatcher(), new ViewMethodMatcher());
+    	return Arrays.asList(new NameMethodMatcher(), new DefaultMethodMatcher());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MoreExecutionTest {
             return new NoResponse();
         }
         
-        @View
+        @Default
         public Response executezzz(String haha) {
             this.executed = true;
             

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class Pages {
@@ -27,7 +26,7 @@ public class Pages {
     }
 
     private List<MethodMatcher> methodMatchers = new ArrayList<MethodMatcher>(Arrays.asList(
-            new NameMethodMatcher(), new ViewMethodMatcher()
+            new NameMethodMatcher(), new DefaultMethodMatcher()
     ));
 
     private List<PageInterceptor> interceptors = new ArrayList<PageInterceptor>();
