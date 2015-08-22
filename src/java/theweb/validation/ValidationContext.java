@@ -1,7 +1,6 @@
 package theweb.validation;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /** 
  * Validation context represents set of messages for a particular object.
@@ -11,8 +10,8 @@ import java.util.Map;
  * all global message methods will delegate to root context
  */
 public class ValidationContext {
-    private Map<String, Message> messages = new HashMap<String, Message>();
-    private Map<String, ValidationContext> children = new HashMap<String, ValidationContext>();
+    private Map<String, Message> messages = new LinkedHashMap<String, Message>();
+    private Map<String, ValidationContext> children = new LinkedHashMap<String, ValidationContext>();
     private ValidationContext root;
     
     public ValidationContext() {

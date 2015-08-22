@@ -2,8 +2,7 @@ package theweb.validation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -109,7 +108,13 @@ public class FormValidation {
     public Map<String, String> getMessages() {
         if (!isValidated()) return new HashMap<>();
         
-        return rootContext.getMessages().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().asString()));
+        return rootContext.getMessages().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().asString(),
+                        (a, b) -> a, // never the case
+                        LinkedHashMap::new
+                        ));
     }
 
     public String message() {
