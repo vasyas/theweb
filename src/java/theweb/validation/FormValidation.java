@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class FormValidation {
@@ -105,10 +106,10 @@ public class FormValidation {
         return !getMessages().isEmpty();
     }
     
-    public Map<String, Message> getMessages() {
+    public Map<String, String> getMessages() {
         if (!isValidated()) return new HashMap<>();
         
-        return rootContext.getMessages();
+        return rootContext.getMessages().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().asString()));
     }
 
     public String message() {
@@ -116,9 +117,7 @@ public class FormValidation {
     }
 
     public String message(String field) {
-        Message message = getMessages().get(field);
-
-        return message == null ? "" : message.asString();
+        return getMessages().getOrDefault(field, "");
     }
 
     public void add(String message) {
@@ -131,5 +130,9 @@ public class FormValidation {
         if (rootContext == null) rootContext = new ValidationContext();
 
         rootContext.addMessage(field, message);
+    }
+
+    public ValidationContext getRootContext() {
+        return rootContext;
     }
 }
