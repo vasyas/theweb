@@ -41,11 +41,11 @@ public class PageState {
     }
     
     /** Add page state to action paramters. Will return local link */
-    public String action(String method, String... params) {
+    public String action(String method, Object... params) {
         Map<String, String[]> parameters = new LinkedHashMap<String, String[]>(parameterMap);
         
         for (int i = 0; i < params.length; i = i + 2)
-            add(parameters, (String) params[i], params[i + 1]);
+            add(parameters, (String) params[i], params[i + 1] == null ? "" : String.valueOf(params[i + 1]));
         
         return link(parameters, method);
     }
@@ -97,7 +97,7 @@ public class PageState {
         return new PageState(page).view();
     }
 
-    public static String page(Page page, String method, String... params) {
+    public static String page(Page page, String method, Object... params) {
         return new PageState(page).action(method, params);
     }
 }
