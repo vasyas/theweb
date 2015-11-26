@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
-/** Html builder with JQuery like synt */
+/** Html builder */
 public class Html {
     private String tagName;
 
@@ -43,6 +43,10 @@ public class Html {
     public Html attr(String name, String value) {
         attributes.put(name, value);
         return this;
+    }
+
+    public String getAttribute(String name) {
+        return attributes.get(name);
     }
 
     public Html add(Object o) { children.add(o); return this; }

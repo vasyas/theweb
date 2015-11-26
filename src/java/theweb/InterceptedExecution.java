@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
-class InterceptedExecution implements Execution {
+public class InterceptedExecution implements Execution {
     private Iterator<PageInterceptor> current;
     private Execution lastExecution;
 
